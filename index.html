@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="cg-build" content="67a5362ab4ea" />
+<meta name="cg-build" content="6f8e463a2288" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
@@ -1477,11 +1477,19 @@
       if (h) h.setAttribute("tabindex", "-1");
       /* 見出しへフォーカスを移すのは、パネルが表示状態（is-open）になってから。
          visibility:hidden の間はフォーカスを受け付けないため（2026-09-19 実測で判明）。 */
-      window.requestAnimationFrame(function () {
+      /* 次の描画のタイミングで表示する。requestAnimationFrame は表示されていないタブや一部の
+         アプリ内ブラウザで止まることがあり、そのままだと「押しても何も起きない」ように見える
+         （2026-09-19 実測）。短いタイマーを保険に付け、先に来た方で1回だけ実行する。 */
+      var shown = false;
+      function reveal() {
+        if (shown || current !== id) return;
+        shown = true;
         p.classList.add("is-open");
         void p.offsetWidth;
         if (h) h.focus({ preventScroll: true });
-      });
+      }
+      window.requestAnimationFrame(reveal);
+      window.setTimeout(reveal, 60);
     }
 
     function hide(id, swapping) {
