@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
+<meta name="cg-build" content="67a5362ab4ea" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
@@ -15,6 +16,46 @@
 <body>
 <title>COLOR GARDEN Homepage</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+  /* ------------------------------------------------------------------
+     最新版チェック（2026-09-19）
+     GitHub Pages は index.html を含む全ファイルを Cache-Control: max-age=600 で返し、変更できない。
+     そのため公開直後の10分間や、公開前から開いていたタブでは古い版が出ることがあった。
+     公開版には <meta name="cg-build"> と version.json が入る（publish-homepage.js が付ける）。
+     読み込み時とタブに戻ったときに version.json をキャッシュなしで確かめ、
+     新しい版があれば1回だけ読み直す。ローカル表示やArtifactでは meta が無いので何もしない。
+  ------------------------------------------------------------------ */
+  (function () {
+    var meta = document.querySelector('meta[name="cg-build"]');
+    if (!meta || !window.fetch || !/^https?:$/.test(location.protocol)) return;
+    var mine = meta.getAttribute("content");
+    var KEY = "cg-build-reload";
+
+    /* 前回この仕組みで読み直した場合は、付けた目印（?_b=）をURLから外す（見た目だけ） */
+    try {
+      var cur = new URL(location.href);
+      if (cur.searchParams.has("_b")) { cur.searchParams.delete("_b"); history.replaceState(history.state, "", cur.pathname + cur.search + cur.hash); }
+    } catch (e) {}
+
+    function check() {
+      fetch("version.json?t=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) {
+          if (!j || !j.version || j.version === mine) return;
+          var tried = null;
+          try { tried = sessionStorage.getItem(KEY); } catch (e) {}
+          if (tried === j.version) return;               /* 同じ版への読み直しは1回だけ（無限ループ防止） */
+          try { sessionStorage.setItem(KEY, j.version); } catch (e) {}
+          var u = new URL(location.href);
+          u.searchParams.set("_b", j.version);           /* 新しいURLにしてブラウザの古い控えを使わせない */
+          location.replace(u.toString());
+        })
+        .catch(function () {});
+    }
+    check();
+    document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") check(); });
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
@@ -949,7 +990,7 @@
 <section class="site-hero">
   <div class="hero-photo"></div>
   <video class="hero-video" id="heroVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1">
-    <source src="assets/hero.mp4" type="video/mp4" />
+    <source src="assets/hero.mp4?v=56535b7c28" type="video/mp4" />
   </video>
   <div class="hero-overlay"></div>
   <div class="hero-copy">
@@ -970,7 +1011,7 @@
   <div class="site-grid-inner">
     <div class="card">
       <div class="card-photo photo-travel">
-        <img class="card-img card-img--fit card-img--travel" src="assets/card-01-travel.jpg" alt="" />
+        <img class="card-img card-img--fit card-img--travel" src="assets/card-01-travel.jpg?v=3c921e7fd9" alt="" />
       </div>
       <div class="card-overlay"></div>
       <div class="card-copy">
@@ -981,7 +1022,7 @@
 
     <div class="card">
       <div class="card-photo photo-music">
-        <img class="card-img card-img--fit" src="assets/card-02-music.jpg" alt="" />
+        <img class="card-img card-img--fit" src="assets/card-02-music.jpg?v=85131a4cfc" alt="" />
       </div>
       <div class="card-overlay"></div>
       <div class="card-copy">
@@ -992,7 +1033,7 @@
 
     <div class="card">
       <div class="card-photo photo-shop">
-        <img class="card-img card-img--fit" src="assets/card-03-shop.jpg" alt="" />
+        <img class="card-img card-img--fit" src="assets/card-03-shop.jpg?v=4f209222cd" alt="" />
       </div>
       <div class="card-overlay"></div>
       <div class="card-copy">
@@ -1003,7 +1044,7 @@
 
     <div class="card">
       <div class="card-photo photo-digital">
-        <img class="card-img card-img--fit card-img--digital" src="assets/card-04-digital.jpg" alt="" />
+        <img class="card-img card-img--fit card-img--digital" src="assets/card-04-digital.jpg?v=5ea4891e67" alt="" />
       </div>
       <div class="card-overlay"></div>
       <div class="card-copy">
@@ -1014,7 +1055,7 @@
 
     <div class="card">
       <div class="card-photo photo-creative">
-        <img class="card-img card-img--fit" src="assets/card-05-creative.jpg" alt="" />
+        <img class="card-img card-img--fit" src="assets/card-05-creative.jpg?v=ea2869fdcc" alt="" />
       </div>
       <div class="card-overlay"></div>
       <div class="card-copy">
@@ -1027,7 +1068,7 @@
          写真は本人承認のうえ ChatGPT で生成（原本 Downloads\JOURNAL.png 1122x1402）。4:5 なので切り落としなし。 -->
     <a class="card card-ext" href="https://note.com/color_garden" target="_blank" rel="noopener">
       <div class="card-photo photo-journal">
-        <img class="card-img card-img--fit" src="assets/card-06-journal.jpg" alt="" />
+        <img class="card-img card-img--fit" src="assets/card-06-journal.jpg?v=1f2afcd336" alt="" />
       </div>
       <div class="card-overlay"></div>
       <div class="card-copy">
