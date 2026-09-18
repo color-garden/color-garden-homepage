@@ -142,6 +142,36 @@
     color: var(--ivory-muted);
   }
 
+  /* ------------------------------------------------------------
+     JOURNAL（2026-09-18 追加）
+     行き先は COLOR GARDEN 公式 note（別サイト・新しいタブ）。
+     サイト上では「note」を出さず、ナビの並びに溶け込ませる。
+     外へ出ることだけは小さな矢印で控えめに知らせる。
+  ------------------------------------------------------------ */
+  .nav-ext::after {
+    content: "\2197";
+    display: inline-block;
+    margin-left: 0.3em;
+    font-size: 0.85em;
+    line-height: 1;
+    color: var(--gold);
+    opacity: 0.7;
+    transform: translateY(-0.08em);
+  }
+
+  /* 画面には出さず、読み上げだけに伝える（「新しいタブで開きます」） */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   .header-actions {
     display: flex;
     align-items: center;
@@ -228,7 +258,7 @@
   /* ------------------------------------------------------------
      モバイルメニュー
      ハンバーガーはこれまで飾りだったので、ここで中身を与える。
-     1080px以下でヘッダーのナビを隠す代わりの導線であり、PCでは出ない。
+     1120px以下でヘッダーのナビを隠す代わりの導線であり、PCでは出ない。
   ------------------------------------------------------------ */
   .mobile-menu {
     position: fixed;
@@ -605,8 +635,10 @@
     .site-footer { padding: var(--sp-5) var(--sp-4) var(--sp-4); }
   }
 
-  /* --- ヘッダーのナビが入りきらなくなる幅。ハンバーガーへ渡す --- */
-  @media (max-width: 1080px) {
+  /* --- ヘッダーのナビが入りきらなくなる幅。ハンバーガーへ渡す ---
+     2026-09-18: Journal を足して7項目になったため 1080 → 1120px に上げた。
+     1080のままだと 1081px のフランス語でロゴとの間が22pxまで詰まった（実測）。 */
+  @media (max-width: 1120px) {
     .site-nav { display: none; }
     .hamburger { display: flex; }
   }
@@ -679,6 +711,7 @@
       <li><a href="#" data-i18n="nav.shop">Shop</a></li>
       <li><a href="#" data-i18n="nav.digital">Digital</a></li>
       <li><a href="#" data-i18n="nav.creative">Creative</a></li>
+      <li><a href="https://note.com/color_garden" class="nav-ext" target="_blank" rel="noopener"><span data-i18n="nav.journal">Journal</span><span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a></li>
       <li><a href="#" data-i18n="nav.about">About</a></li>
     </ul>
   </nav>
@@ -699,7 +732,7 @@
   </div>
 </header>
 
-<!-- モバイルメニュー（2026-09-09 追加）。1080px以下でヘッダーのナビの代わりになる。 -->
+<!-- モバイルメニュー（2026-09-09 追加）。1120px以下でヘッダーのナビの代わりになる。 -->
 <div class="mobile-menu" id="mobileMenu" hidden>
   <button class="mobile-menu-close" id="menuClose" aria-label="メニューを閉じる" data-i18n-aria="a11y.close">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 6l12 12M18 6L6 18" /></svg>
@@ -711,6 +744,7 @@
     <li><a href="#" data-i18n="nav.shop">Shop</a></li>
     <li><a href="#" data-i18n="nav.digital">Digital</a></li>
     <li><a href="#" data-i18n="nav.creative">Creative</a></li>
+    <li><a href="https://note.com/color_garden" class="nav-ext" target="_blank" rel="noopener"><span data-i18n="nav.journal">Journal</span><span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a></li>
     <li><a href="#" data-i18n="nav.about">About</a></li>
   </ul>
 </div>
@@ -813,7 +847,7 @@
     <div class="footer-col"><p class="footer-logo">COLOR GARDEN</p></div>
     <div class="footer-col">
       <h4 data-i18n="footer.nav">Navigation</h4>
-      <ul><li><a href="#" data-i18n="nav.travel">Travel</a></li><li><a href="#" data-i18n="nav.music">Music</a></li><li><a href="#" data-i18n="nav.shop">Shop</a></li><li><a href="#" data-i18n="nav.digital">Digital</a></li><li><a href="#" data-i18n="nav.creative">Creative</a></li><li><a href="#" data-i18n="nav.about">About</a></li></ul>
+      <ul><li><a href="#" data-i18n="nav.travel">Travel</a></li><li><a href="#" data-i18n="nav.music">Music</a></li><li><a href="#" data-i18n="nav.shop">Shop</a></li><li><a href="#" data-i18n="nav.digital">Digital</a></li><li><a href="#" data-i18n="nav.creative">Creative</a></li><li><a href="https://note.com/color_garden" class="nav-ext" target="_blank" rel="noopener"><span data-i18n="nav.journal">Journal</span><span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a></li><li><a href="#" data-i18n="nav.about">About</a></li></ul>
     </div>
     <div class="footer-col">
       <h4 data-i18n="footer.support">Support</h4>
@@ -843,7 +877,7 @@
 
      ブランド名 COLOR GARDEN は翻訳対象に入れていない（HTMLに直書きのまま）。
   ================================================================== */
-  var CG_I18N = {"_langs":[{"code":"ja","label":"JA","native":"日本語","htmlLang":"ja"},{"code":"en","label":"EN","native":"English","htmlLang":"en"},{"code":"fr","label":"FR","native":"Français","htmlLang":"fr"},{"code":"es","label":"ES","native":"Español","htmlLang":"es"},{"code":"ko","label":"KO","native":"한국어","htmlLang":"ko"}],"ja":{"meta.title":"COLOR GARDEN","nav.travel":"Travel","nav.music":"Music","nav.shop":"Shop","nav.digital":"Digital","nav.creative":"Creative","nav.about":"About","hero.eyebrow":"Luxury Travel · Original Sound · Creative Life","hero.tagline":"美しい景色を歩き、心を動かす音に耳を澄まし、<br />日々の暮らしに彩りを添える。","hero.cta":"EXPLORE","intro.eyebrow":"Explore Our World","intro.headline":"Discover. Feel. Be inspired.","card.travel.title":"TRAVEL","card.travel.sub":"美しい景色と旅の記録","card.music.title":"MUSIC","card.music.sub":"オリジナル楽曲","card.shop.title":"SHOP","card.shop.sub":"アパレル・グッズ","card.digital.title":"DIGITAL","card.digital.sub":"ノウハウ・デジタル商品","card.creative.title":"CREATIVE","card.creative.sub":"映像制作・クリエイティブ活動","card.view":"VIEW MORE","about.eyebrow":"About Color Garden","about.heading":"彩りある人生を、あなたに。","about.body":"COLOR GARDENは、旅・音楽・ものづくりを通じて、日常に小さな感動をもたらすライフスタイルブランドです。美しい景色に心を動かされる瞬間、耳に残る一節の旋律、丁寧に作られたプロダクト——そのひとつひとつが、あなたの毎日に新しい彩りを加えていきます。","about.cta":"OUR STORY","footer.nav":"Navigation","footer.support":"Support","footer.follow":"Follow Us","footer.contact":"Contact","footer.faq":"FAQ","footer.privacy":"Privacy Policy","footer.copyright":"© 2026 COLOR GARDEN. ALL RIGHTS RESERVED.","a11y.menu":"メニュー","a11y.language":"表示言語を選ぶ","a11y.close":"メニューを閉じる"},"en":{"meta.title":"COLOR GARDEN","nav.travel":"Travel","nav.music":"Music","nav.shop":"Shop","nav.digital":"Digital","nav.creative":"Creative","nav.about":"About","hero.eyebrow":"Luxury Travel · Original Sound · Creative Life","hero.tagline":"Walk through landscapes that move you, listen for the melody that lingers,<br />and let color settle into every ordinary day.","hero.cta":"EXPLORE","intro.eyebrow":"Explore Our World","intro.headline":"Discover. Feel. Be inspired.","card.travel.title":"TRAVEL","card.travel.sub":"Landscapes worth the journey","card.music.title":"MUSIC","card.music.sub":"Original compositions","card.shop.title":"SHOP","card.shop.sub":"Apparel and objects","card.digital.title":"DIGITAL","card.digital.sub":"Knowledge, in digital form","card.creative.title":"CREATIVE","card.creative.sub":"Film and creative direction","card.view":"VIEW MORE","about.eyebrow":"About COLOR GARDEN","about.heading":"A life lived in full color.","about.body":"COLOR GARDEN is a lifestyle house built around travel, music and craft — a search for the small moments that move us. A view that stops you mid-step, a phrase of melody that stays for days, an object made with real care: each one adds another shade to the life you are already living.","about.cta":"OUR STORY","footer.nav":"Navigation","footer.support":"Support","footer.follow":"Follow Us","footer.contact":"Contact","footer.faq":"FAQ","footer.privacy":"Privacy Policy","footer.copyright":"© 2026 COLOR GARDEN. ALL RIGHTS RESERVED.","a11y.menu":"Menu","a11y.language":"Choose a language","a11y.close":"Close menu"},"fr":{"meta.title":"COLOR GARDEN","nav.travel":"Voyage","nav.music":"Musique","nav.shop":"Boutique","nav.digital":"Digital","nav.creative":"Création","nav.about":"À propos","hero.eyebrow":"Voyage d'exception · Son original · Vie créative","hero.tagline":"Parcourir des paysages qui émeuvent, écouter la mélodie qui demeure,<br />et laisser la couleur entrer dans chaque jour.","hero.cta":"EXPLORER","intro.eyebrow":"Explorez notre univers","intro.headline":"Découvrir. Ressentir. S'inspirer.","card.travel.title":"VOYAGE","card.travel.sub":"Paysages et carnets de route","card.music.title":"MUSIQUE","card.music.sub":"Compositions originales","card.shop.title":"BOUTIQUE","card.shop.sub":"Prêt-à-porter et objets","card.digital.title":"DIGITAL","card.digital.sub":"Savoir-faire et produits numériques","card.creative.title":"CRÉATION","card.creative.sub":"Films et direction créative","card.view":"DÉCOUVRIR","about.eyebrow":"À propos de COLOR GARDEN","about.heading":"Une vie en couleurs.","about.body":"COLOR GARDEN est une maison de lifestyle née du voyage, de la musique et du geste artisanal — la recherche de ces instants qui nous émeuvent. Un paysage qui suspend le pas, une mélodie qui reste des jours durant, un objet façonné avec soin : chacun ajoute une nuance à la vie que vous menez déjà.","about.cta":"NOTRE HISTOIRE","footer.nav":"Navigation","footer.support":"Assistance","footer.follow":"Nous suivre","footer.contact":"Contact","footer.faq":"FAQ","footer.privacy":"Politique de confidentialité","footer.copyright":"© 2026 COLOR GARDEN. TOUS DROITS RÉSERVÉS.","a11y.menu":"Menu","a11y.language":"Choisir une langue","a11y.close":"Fermer le menu"},"es":{"meta.title":"COLOR GARDEN","nav.travel":"Viajes","nav.music":"Música","nav.shop":"Tienda","nav.digital":"Digital","nav.creative":"Creativo","nav.about":"Nosotros","hero.eyebrow":"Viajes de autor · Sonido original · Vida creativa","hero.tagline":"Recorrer paisajes que conmueven, escuchar la melodía que permanece<br />y dejar que el color habite cada día.","hero.cta":"EXPLORAR","intro.eyebrow":"Explora nuestro mundo","intro.headline":"Descubrir. Sentir. Inspirarse.","card.travel.title":"VIAJES","card.travel.sub":"Paisajes y cuadernos de viaje","card.music.title":"MÚSICA","card.music.sub":"Composiciones originales","card.shop.title":"TIENDA","card.shop.sub":"Prendas y objetos","card.digital.title":"DIGITAL","card.digital.sub":"Conocimiento y productos digitales","card.creative.title":"CREATIVO","card.creative.sub":"Cine y dirección creativa","card.view":"DESCUBRIR","about.eyebrow":"Sobre COLOR GARDEN","about.heading":"Una vida llena de color.","about.body":"COLOR GARDEN es una casa de lifestyle nacida del viaje, la música y el oficio: la búsqueda de esos instantes que nos conmueven. Un paisaje que detiene el paso, una melodía que permanece durante días, un objeto hecho con verdadero cuidado. Cada uno añade un matiz nuevo a la vida que ya habitas.","about.cta":"NUESTRA HISTORIA","footer.nav":"Navegación","footer.support":"Atención","footer.follow":"Síguenos","footer.contact":"Contacto","footer.faq":"Preguntas frecuentes","footer.privacy":"Política de privacidad","footer.copyright":"© 2026 COLOR GARDEN. TODOS LOS DERECHOS RESERVADOS.","a11y.menu":"Menú","a11y.language":"Elegir idioma","a11y.close":"Cerrar el menú"},"ko":{"meta.title":"COLOR GARDEN","nav.travel":"여행","nav.music":"음악","nav.shop":"스토어","nav.digital":"디지털","nav.creative":"크리에이티브","nav.about":"브랜드 소개","hero.eyebrow":"럭셔리 트래블 · 오리지널 사운드 · 크리에이티브 라이프","hero.tagline":"마음을 움직이는 풍경을 걷고,<br />오래 남는 선율에 귀 기울이며,<br />일상에 색을 더합니다.","hero.cta":"둘러보기","intro.eyebrow":"우리의 세계","intro.headline":"발견하고, 느끼고, 영감을 얻다.","card.travel.title":"여행","card.travel.sub":"마음을 움직인 풍경의 기록","card.music.title":"음악","card.music.sub":"오리지널 음악","card.shop.title":"스토어","card.shop.sub":"의류와 오브제","card.digital.title":"디지털","card.digital.sub":"노하우와 디지털 제품","card.creative.title":"크리에이티브","card.creative.sub":"영상 제작과 크리에이티브","card.view":"더 보기","about.eyebrow":"COLOR GARDEN 소개","about.heading":"삶에 색을 더하다.","about.body":"COLOR GARDEN은 여행과 음악, 그리고 만드는 일을 통해 일상에 작은 감동을 전하는 라이프스타일 브랜드입니다. 발길을 멈추게 하는 풍경, 오래 맴도는 한 소절의 선율, 정성으로 완성한 물건 — 그 하나하나가 지금의 하루에 새로운 색을 더합니다.","about.cta":"브랜드 스토리","footer.nav":"메뉴","footer.support":"고객 지원","footer.follow":"팔로우","footer.contact":"문의","footer.faq":"자주 묻는 질문","footer.privacy":"개인정보 처리방침","footer.copyright":"© 2026 COLOR GARDEN. ALL RIGHTS RESERVED.","a11y.menu":"메뉴","a11y.language":"언어 선택","a11y.close":"메뉴 닫기"}};
+  var CG_I18N = {"_langs":[{"code":"ja","label":"JA","native":"日本語","htmlLang":"ja"},{"code":"en","label":"EN","native":"English","htmlLang":"en"},{"code":"fr","label":"FR","native":"Français","htmlLang":"fr"},{"code":"es","label":"ES","native":"Español","htmlLang":"es"},{"code":"ko","label":"KO","native":"한국어","htmlLang":"ko"}],"ja":{"meta.title":"COLOR GARDEN","nav.travel":"Travel","nav.music":"Music","nav.shop":"Shop","nav.digital":"Digital","nav.creative":"Creative","nav.journal":"Journal","nav.about":"About","hero.eyebrow":"Luxury Travel · Original Sound · Creative Life","hero.tagline":"美しい景色を歩き、心を動かす音に耳を澄まし、<br />日々の暮らしに彩りを添える。","hero.cta":"EXPLORE","intro.eyebrow":"Explore Our World","intro.headline":"Discover. Feel. Be inspired.","card.travel.title":"TRAVEL","card.travel.sub":"美しい景色と旅の記録","card.music.title":"MUSIC","card.music.sub":"オリジナル楽曲","card.shop.title":"SHOP","card.shop.sub":"アパレル・グッズ","card.digital.title":"DIGITAL","card.digital.sub":"ノウハウ・デジタル商品","card.creative.title":"CREATIVE","card.creative.sub":"映像制作・クリエイティブ活動","card.view":"VIEW MORE","about.eyebrow":"About Color Garden","about.heading":"彩りある人生を、あなたに。","about.body":"COLOR GARDENは、旅・音楽・ものづくりを通じて、日常に小さな感動をもたらすライフスタイルブランドです。美しい景色に心を動かされる瞬間、耳に残る一節の旋律、丁寧に作られたプロダクト——そのひとつひとつが、あなたの毎日に新しい彩りを加えていきます。","about.cta":"OUR STORY","footer.nav":"Navigation","footer.support":"Support","footer.follow":"Follow Us","footer.contact":"Contact","footer.faq":"FAQ","footer.privacy":"Privacy Policy","footer.copyright":"© 2026 COLOR GARDEN. ALL RIGHTS RESERVED.","a11y.menu":"メニュー","a11y.language":"表示言語を選ぶ","a11y.newtab":"（新しいタブで開きます）","a11y.close":"メニューを閉じる"},"en":{"meta.title":"COLOR GARDEN","nav.travel":"Travel","nav.music":"Music","nav.shop":"Shop","nav.digital":"Digital","nav.creative":"Creative","nav.journal":"Journal","nav.about":"About","hero.eyebrow":"Luxury Travel · Original Sound · Creative Life","hero.tagline":"Walk through landscapes that move you, listen for the melody that lingers,<br />and let color settle into every ordinary day.","hero.cta":"EXPLORE","intro.eyebrow":"Explore Our World","intro.headline":"Discover. Feel. Be inspired.","card.travel.title":"TRAVEL","card.travel.sub":"Landscapes worth the journey","card.music.title":"MUSIC","card.music.sub":"Original compositions","card.shop.title":"SHOP","card.shop.sub":"Apparel and objects","card.digital.title":"DIGITAL","card.digital.sub":"Knowledge, in digital form","card.creative.title":"CREATIVE","card.creative.sub":"Film and creative direction","card.view":"VIEW MORE","about.eyebrow":"About COLOR GARDEN","about.heading":"A life lived in full color.","about.body":"COLOR GARDEN is a lifestyle house built around travel, music and craft — a search for the small moments that move us. A view that stops you mid-step, a phrase of melody that stays for days, an object made with real care: each one adds another shade to the life you are already living.","about.cta":"OUR STORY","footer.nav":"Navigation","footer.support":"Support","footer.follow":"Follow Us","footer.contact":"Contact","footer.faq":"FAQ","footer.privacy":"Privacy Policy","footer.copyright":"© 2026 COLOR GARDEN. ALL RIGHTS RESERVED.","a11y.menu":"Menu","a11y.language":"Choose a language","a11y.newtab":"(opens in a new tab)","a11y.close":"Close menu"},"fr":{"meta.title":"COLOR GARDEN","nav.travel":"Voyage","nav.music":"Musique","nav.shop":"Boutique","nav.digital":"Digital","nav.creative":"Création","nav.journal":"Journal","nav.about":"À propos","hero.eyebrow":"Voyage d'exception · Son original · Vie créative","hero.tagline":"Parcourir des paysages qui émeuvent, écouter la mélodie qui demeure,<br />et laisser la couleur entrer dans chaque jour.","hero.cta":"EXPLORER","intro.eyebrow":"Explorez notre univers","intro.headline":"Découvrir. Ressentir. S'inspirer.","card.travel.title":"VOYAGE","card.travel.sub":"Paysages et carnets de route","card.music.title":"MUSIQUE","card.music.sub":"Compositions originales","card.shop.title":"BOUTIQUE","card.shop.sub":"Prêt-à-porter et objets","card.digital.title":"DIGITAL","card.digital.sub":"Savoir-faire et produits numériques","card.creative.title":"CRÉATION","card.creative.sub":"Films et direction créative","card.view":"DÉCOUVRIR","about.eyebrow":"À propos de COLOR GARDEN","about.heading":"Une vie en couleurs.","about.body":"COLOR GARDEN est une maison de lifestyle née du voyage, de la musique et du geste artisanal — la recherche de ces instants qui nous émeuvent. Un paysage qui suspend le pas, une mélodie qui reste des jours durant, un objet façonné avec soin : chacun ajoute une nuance à la vie que vous menez déjà.","about.cta":"NOTRE HISTOIRE","footer.nav":"Navigation","footer.support":"Assistance","footer.follow":"Nous suivre","footer.contact":"Contact","footer.faq":"FAQ","footer.privacy":"Politique de confidentialité","footer.copyright":"© 2026 COLOR GARDEN. TOUS DROITS RÉSERVÉS.","a11y.menu":"Menu","a11y.language":"Choisir une langue","a11y.newtab":"(s'ouvre dans un nouvel onglet)","a11y.close":"Fermer le menu"},"es":{"meta.title":"COLOR GARDEN","nav.travel":"Viajes","nav.music":"Música","nav.shop":"Tienda","nav.digital":"Digital","nav.creative":"Creativo","nav.journal":"Diario","nav.about":"Nosotros","hero.eyebrow":"Viajes de autor · Sonido original · Vida creativa","hero.tagline":"Recorrer paisajes que conmueven, escuchar la melodía que permanece<br />y dejar que el color habite cada día.","hero.cta":"EXPLORAR","intro.eyebrow":"Explora nuestro mundo","intro.headline":"Descubrir. Sentir. Inspirarse.","card.travel.title":"VIAJES","card.travel.sub":"Paisajes y cuadernos de viaje","card.music.title":"MÚSICA","card.music.sub":"Composiciones originales","card.shop.title":"TIENDA","card.shop.sub":"Prendas y objetos","card.digital.title":"DIGITAL","card.digital.sub":"Conocimiento y productos digitales","card.creative.title":"CREATIVO","card.creative.sub":"Cine y dirección creativa","card.view":"DESCUBRIR","about.eyebrow":"Sobre COLOR GARDEN","about.heading":"Una vida llena de color.","about.body":"COLOR GARDEN es una casa de lifestyle nacida del viaje, la música y el oficio: la búsqueda de esos instantes que nos conmueven. Un paisaje que detiene el paso, una melodía que permanece durante días, un objeto hecho con verdadero cuidado. Cada uno añade un matiz nuevo a la vida que ya habitas.","about.cta":"NUESTRA HISTORIA","footer.nav":"Navegación","footer.support":"Atención","footer.follow":"Síguenos","footer.contact":"Contacto","footer.faq":"Preguntas frecuentes","footer.privacy":"Política de privacidad","footer.copyright":"© 2026 COLOR GARDEN. TODOS LOS DERECHOS RESERVADOS.","a11y.menu":"Menú","a11y.language":"Elegir idioma","a11y.newtab":"(se abre en una pestaña nueva)","a11y.close":"Cerrar el menú"},"ko":{"meta.title":"COLOR GARDEN","nav.travel":"여행","nav.music":"음악","nav.shop":"스토어","nav.digital":"디지털","nav.creative":"크리에이티브","nav.journal":"저널","nav.about":"브랜드 소개","hero.eyebrow":"럭셔리 트래블 · 오리지널 사운드 · 크리에이티브 라이프","hero.tagline":"마음을 움직이는 풍경을 걷고,<br />오래 남는 선율에 귀 기울이며,<br />일상에 색을 더합니다.","hero.cta":"둘러보기","intro.eyebrow":"우리의 세계","intro.headline":"발견하고, 느끼고, 영감을 얻다.","card.travel.title":"여행","card.travel.sub":"마음을 움직인 풍경의 기록","card.music.title":"음악","card.music.sub":"오리지널 음악","card.shop.title":"스토어","card.shop.sub":"의류와 오브제","card.digital.title":"디지털","card.digital.sub":"노하우와 디지털 제품","card.creative.title":"크리에이티브","card.creative.sub":"영상 제작과 크리에이티브","card.view":"더 보기","about.eyebrow":"COLOR GARDEN 소개","about.heading":"삶에 색을 더하다.","about.body":"COLOR GARDEN은 여행과 음악, 그리고 만드는 일을 통해 일상에 작은 감동을 전하는 라이프스타일 브랜드입니다. 발길을 멈추게 하는 풍경, 오래 맴도는 한 소절의 선율, 정성으로 완성한 물건 — 그 하나하나가 지금의 하루에 새로운 색을 더합니다.","about.cta":"브랜드 스토리","footer.nav":"메뉴","footer.support":"고객 지원","footer.follow":"팔로우","footer.contact":"문의","footer.faq":"자주 묻는 질문","footer.privacy":"개인정보 처리방침","footer.copyright":"© 2026 COLOR GARDEN. ALL RIGHTS RESERVED.","a11y.menu":"메뉴","a11y.language":"언어 선택","a11y.newtab":"(새 탭에서 열림)","a11y.close":"메뉴 닫기"}};
 
   (function () {
     var STORE_KEY = "cg-homepage-lang";
@@ -964,7 +998,7 @@
 
   /* ------------------------------------------------------------------
      モバイルメニュー（2026-09-09 追加）
-     1080px以下でヘッダーのナビを隠すため、その代わりの導線。
+     1120px以下でヘッダーのナビを隠すため、その代わりの導線。
      これまでハンバーガーは飾りで、押しても何も起きなかった。
   ------------------------------------------------------------------ */
   (function () {
@@ -992,7 +1026,7 @@
     panel.addEventListener("click", function (e) { if (e.target.tagName === "A") hide(); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") hide(); });
     /* PC幅に戻したときに開きっぱなしにしない */
-    window.addEventListener("resize", function () { if (window.innerWidth > 1080) hide(); });
+    window.addEventListener("resize", function () { if (window.innerWidth > 1120) hide(); });
   })();
 </script>
 
