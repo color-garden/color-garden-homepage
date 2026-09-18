@@ -1,0 +1,1087 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  /* Artifact ランタイムが公開ページに入れる最小リセットと同じもの */
+  :root { color-scheme: light; }
+  body { margin: 0; font: 14px system-ui, -apple-system, "Segoe UI", sans-serif; background: #fafaf9; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<title>COLOR GARDEN Homepage</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Shippori+Mincho:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  /* Design tokens — identical to the confirmed COLOR GARDEN Style Guide.
+     Nothing site-wide changes here; the pink/blue hues below are declared
+     only inside the Music card rules further down. */
+  :root {
+    --bg-primary: #14120e;
+    --bg-surface: #1d1a15;
+    --bg-surface-deep: #0f0d0a;
+
+    --gold: #c6a567;
+    --gold-light: #dfc28f;
+    --gold-dim: rgba(198, 165, 103, 0.35);
+
+    --ivory: #f5f1e7;
+    --ivory-muted: #beb6a4;
+    --ivory-faint: #8b8477;
+
+    --serif-en: "Cormorant Garamond", "Times New Roman", serif;
+    --serif-jp: "Shippori Mincho", "Cormorant Garamond", serif;
+    --sans-en: "Inter", -apple-system, "Hiragino Sans", sans-serif;
+    --sans-jp: "Noto Sans JP", "Inter", -apple-system, sans-serif;
+
+    /* 韓国語（2026-09-09 多言語対応で追加）。日本語・欧文の指定には触れていない。 */
+    --serif-ko: "Noto Serif KR", "Cormorant Garamond", serif;
+    --sans-ko: "Noto Sans KR", "Inter", -apple-system, sans-serif;
+
+    --sp-1: 8px; --sp-2: 16px; --sp-3: 24px; --sp-4: 32px; --sp-5: 48px;
+    --sp-6: 64px; --sp-7: 96px; --sp-8: 128px; --sp-9: 160px;
+
+    --ease-luxe: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* ------------------------------------------------------------
+     多言語（2026-09-09 追加）
+     言語切替は <html lang> を書き換えて行う。書体だけは韓国語で
+     Cormorant Garamond / Noto Sans JP にハングルが無いため差し替える。
+     ja / en / fr / es は既存のまま一切変えない。
+  ------------------------------------------------------------ */
+  html[lang="ko"] {
+    --serif-en: var(--serif-ko);
+    --serif-jp: var(--serif-ko);
+    --sans-en: var(--sans-ko);
+    --sans-jp: var(--sans-ko);
+  }
+
+  /* ブランド表記と通し番号はどの言語でも同じ書体で出す。
+     ここまで韓国語書体にすると COLOR GARDEN の字面が変わってしまう。 */
+  html[lang="ko"] .site-logo,
+  html[lang="ko"] .hero-title,
+  html[lang="ko"] .footer-logo,
+  html[lang="ko"] .card-number {
+    font-family: "Cormorant Garamond", "Times New Roman", serif;
+  }
+
+  /* 訳文が入るまでのちらつきを防ぐ。JSが最初の描画前に外す。 */
+  html.i18n-pending body { visibility: hidden; }
+
+  * { box-sizing: border-box; }
+  html { background: var(--bg-primary); }
+  body {
+    margin: 0;
+    background: var(--bg-primary);
+    color: var(--ivory);
+    font-family: var(--sans-jp);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; padding: 0; }
+  a:focus-visible, button:focus-visible { outline: 1px solid var(--gold-light); outline-offset: 3px; }
+  img, svg { display: block; max-width: 100%; }
+
+  /* ============================================================
+     Header
+  ============================================================ */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 84px;
+    padding: 0 var(--sp-6);
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background 220ms var(--ease-luxe), border-color 220ms var(--ease-luxe), backdrop-filter 220ms;
+  }
+
+  .site-header.is-scrolled {
+    background: rgba(29, 26, 21, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom-color: var(--gold-dim);
+  }
+
+  .site-logo {
+    font-family: var(--serif-en);
+    font-weight: 500;
+    font-size: 1.15rem;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+  }
+
+  .site-nav {
+    display: flex;
+    gap: var(--sp-4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .site-nav a {
+    font-family: var(--sans-en);
+    font-weight: 500;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ivory-muted);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+
+  .header-actions svg { width: 17px; height: 17px; color: var(--ivory-muted); }
+
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 22px;
+  }
+
+  .hamburger span {
+    display: block;
+    height: 1px;
+    background: var(--ivory);
+  }
+
+
+  /* ============================================================
+     Language switcher / Mobile menu  (2026-09-09 追加)
+     既存の配色・書体トークンだけで組んでいる。新しい色は足していない。
+  ============================================================ */
+  .lang-switch { position: relative; }
+
+  .lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 8px;
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    font-family: var(--sans-en);
+    font-weight: 500;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    color: var(--ivory-muted);
+    transition: color 220ms var(--ease-luxe), border-color 220ms var(--ease-luxe);
+  }
+  .lang-toggle:hover, .lang-switch.is-open .lang-toggle { color: var(--gold); border-color: var(--gold); }
+  .lang-toggle .globe { width: 13px; height: 13px; }
+  .lang-toggle .caret { width: 9px; height: 9px; transition: transform 220ms var(--ease-luxe); }
+  .lang-switch.is-open .lang-toggle .caret { transform: rotate(180deg); }
+
+  .lang-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 40;
+    min-width: 152px;
+    margin: 0;
+    padding: 6px 0;
+    list-style: none;
+    background: rgba(29, 26, 21, 0.97);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 220ms var(--ease-luxe), transform 220ms var(--ease-luxe), visibility 220ms;
+  }
+  .lang-switch.is-open .lang-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+
+  .lang-menu button {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 14px;
+    text-align: left;
+    color: var(--ivory-muted);
+    transition: color 180ms var(--ease-luxe), background 180ms var(--ease-luxe);
+  }
+  .lang-menu button:hover { color: var(--ivory); background: rgba(198, 165, 103, 0.1); }
+  .lang-menu button[aria-selected="true"] { color: var(--gold); }
+  .lang-code { font-family: var(--sans-en); font-weight: 500; font-size: 0.64rem; letter-spacing: 0.14em; min-width: 20px; }
+  .lang-name { font-size: 0.8125rem; }
+
+  /* ------------------------------------------------------------
+     モバイルメニュー
+     ハンバーガーはこれまで飾りだったので、ここで中身を与える。
+     1080px以下でヘッダーのナビを隠す代わりの導線であり、PCでは出ない。
+  ------------------------------------------------------------ */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    padding: var(--sp-6) var(--sp-4) var(--sp-4);
+    background: rgba(15, 13, 10, 0.98);
+    backdrop-filter: blur(14px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 280ms var(--ease-luxe), visibility 280ms;
+  }
+  .mobile-menu.is-open { opacity: 1; visibility: visible; }
+
+  .mobile-menu-close {
+    position: absolute;
+    top: 26px;
+    right: var(--sp-4);
+    width: 30px;
+    height: 30px;
+    color: var(--ivory-muted);
+  }
+  .mobile-menu-close svg { width: 18px; height: 18px; }
+
+  .mobile-nav { list-style: none; margin: var(--sp-5) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--sp-3); }
+  .mobile-nav a {
+    font-family: var(--serif-en);
+    font-size: 1.6rem;
+    letter-spacing: 0.04em;
+    color: var(--ivory);
+  }
+  html[lang="ko"] .mobile-nav a { font-size: 1.4rem; }
+
+  /* ============================================================
+     Hero — unchanged from the confirmed TOP page
+  ============================================================ */
+  .site-hero {
+    position: relative;
+    height: 100vh;
+    min-height: 620px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .hero-photo {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 74% 28%, rgba(255, 214, 150, 0.5) 0%, rgba(217, 168, 87, 0.22) 20%, transparent 42%),
+      linear-gradient(180deg, #4a3c28 0%, #2c2420 35%, #171310 72%, #0f0d0a 100%);
+    animation: ambientDrift 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes ambientDrift {
+    0% { transform: scale(1) translateY(0); }
+    100% { transform: scale(1.06) translateY(-1.5%); }
+  }
+
+  /* ------------------------------------------------------------
+     Hero background video (2026-09-08 追加)
+     Style Guide 04章の「ヒーロー動画 / 短尺ループ動画」を実装したもの。
+     デザイン・文章・レイアウトには手を触れていない。既存の .hero-photo は
+     読み込み前とデコード不可時の下地としてそのまま残してある。
+     object-fit:cover なので拡大縮小しても縦横比は崩れない。
+  ------------------------------------------------------------ */
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* PCのChromeではHero(約1936x860)が動画(1920x1012)より横長になるため、
+       cover は上下を約152px切り落とす。どの帯を残すかがこの値の意味。
+
+       実測した被写体の位置（動画1012px中）:
+         カプリの女性 … 帽子の上端 537px / 体の下端 1011px（画面下端まで写っている）
+         京都の塔     … 先端 223px
+         浜辺の跳躍   … 中央付近
+
+       画面に見えるのは1021px中851pxだけで、常に170pxが隠れる。
+       跳躍する女性の髪の先端は32px（6.3秒の最高到達点）まで達する一方、
+       カプリの女性は下端1011pxまで写っている。両方を収めるには979px必要だが
+       見えるのは851pxしかなく、ひとつの値では同時に収まらない。
+       そこでカットの切り替わりに合わせて値を変える（下の script を参照）。
+       ここでの既定値は、万一スクリプトが動かなくても跳躍シーンの全身が
+       残るように 19%（＝上の切り落とし32px）にしてある。 */
+    object-position: center 19%;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 900ms var(--ease-luxe);
+    pointer-events: none;
+  }
+
+  .hero-video.is-ready { opacity: 1; }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(15, 13, 10, 0.72) 0%, rgba(15, 13, 10, 0.28) 46%, rgba(15, 13, 10, 0.1) 72%);
+  }
+
+  .hero-copy { position: relative; z-index: 2; max-width: 480px; padding: 0 var(--sp-6); }
+
+  .hero-eyebrow {
+    font-family: var(--sans-en);
+    font-weight: 500;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 var(--sp-3);
+  }
+
+  .hero-title {
+    font-family: var(--serif-en);
+    font-weight: 500;
+    font-size: clamp(2.75rem, 8vw, 6rem);
+    line-height: 1.05;
+    margin: 0 0 var(--sp-3);
+    color: var(--ivory);
+  }
+
+  .hero-tagline {
+    font-family: var(--sans-jp);
+    font-weight: 300;
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: var(--ivory-muted);
+    margin: 0 0 var(--sp-4);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: var(--sans-en);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 14px 32px;
+  }
+
+  .btn svg { width: 14px; height: 14px; }
+
+  /* ============================================================
+     Intro
+  ============================================================ */
+  .site-intro { text-align: center; padding: var(--sp-9) var(--sp-4); }
+
+  .intro-headline {
+    font-family: var(--serif-en);
+    font-weight: 400;
+    font-size: clamp(1.7rem, 3.6vw, 2.5rem);
+    margin: var(--sp-2) 0 0;
+  }
+
+  .intro-rule { width: 40px; height: 1px; background: var(--gold); margin: var(--sp-3) auto 0; }
+
+  /* ============================================================
+     Category grid
+  ============================================================ */
+  .site-grid { padding: 0 var(--sp-6) var(--sp-9); }
+
+  .site-grid-inner {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--sp-3);
+  }
+
+  .card {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .card-photo { position: absolute; inset: 0; transition: transform 6000ms var(--ease-luxe); }
+  .card:hover .card-photo { transform: scale(1.04); }
+
+  /* ------------------------------------------------------------
+     カード写真（2026-09-09 追加）
+     5枚とも同じ土台。文字はHTML側（.card-copy）で重ねるので、
+     画像は背景ビジュアルとしてだけ使う。
+     .card が overflow:hidden なので、はみ出した分は切り取られる。
+  ------------------------------------------------------------ */
+  /* 冒頭の img{max-width:100%} が幅指定を打ち消してしまうので、ここだけ解除する。
+     カード内の画像はサイズを明示的に決めており、はみ出しは .card が切り取る。 */
+  .card-img { position: absolute; display: block; max-width: none; }
+
+  /* 既定。文字が入っていない写真はこれだけで4:5に収まる（引き伸ばしなし）。
+     MUSIC / SHOP / DIGITAL / CREATIVE もこのクラスを使う。 */
+  .card-img--fit {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* TRAVEL（2026-09-09 差し替え：夕景 → 朝のSantorini）
+     新しい画像は文字が入っていないので、他の4枚と同じ .card-img--fit を使う。
+     元画像は横長（比率1.094）なので 4:5 では左右あわせて26.9%が切り落とされる。
+     0%/25%/40%/50%/62%/100% を実際に描画して比較した結果 40% を採用：
+       ・朝日とその海面反射が左端で切れずに収まる（朝の景色＝今回の差し替えの目的）
+       ・中央のブルードームと鐘楼が欠けない
+       ・手前の朝食（クロワッサン／オレンジジュース／カプチーノ）が全部入る
+     62%以上では朝日が切れ、100%では朝日が完全に消えるため不採用。 */
+  .card-img--travel { object-position: 40% center; }
+
+  /* カードごとの見せ方（2026-09-09）
+     MUSIC / SHOP / CREATIVE は元画像がちょうど4:5なので切り落としが起きない。
+     指定は既定のままで、被写体はすべて収まる。
+     DIGITAL だけ元画像が正方形(1254x1254)で左右20%が切られるため、
+     女性（左端 x=110px = 8.8%）が欠けないよう左寄りにする。
+       35% → 左の切り落とし88px（女性まで22pxの余裕）／右163px */
+  .card-img--digital { object-position: 35% center; }
+
+  .photo-travel { background: linear-gradient(158deg, #e3b571 0%, #b6793f 26%, #3c3226 56%, #14120e 100%); }
+  .photo-shop { background: linear-gradient(135deg, #cbb896 0%, #8d7455 38%, #2c2620 74%, #14120e 100%); }
+  .photo-digital { background: linear-gradient(150deg, #4c4738 0%, #2a2721 34%, #182036 70%, #14120e 100%); }
+  .photo-creative { background: linear-gradient(146deg, #d9a857 0%, #6b6440 34%, #24352b 66%, #14120e 100%); }
+
+  /* MUSIC — restored to the original design (same visual language as
+     TRAVEL/SHOP/DIGITAL/CREATIVE). The pink×blue brand-visual test has
+     been removed. */
+  .photo-music {
+    background: radial-gradient(circle at 28% 20%, #7c5a35 0%, #3a2a1c 46%, #14120e 100%);
+  }
+
+  .card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(15, 13, 10, 0.88) 0%, rgba(15, 13, 10, 0.4) 42%, transparent 62%);
+  }
+
+  .card-copy { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--sp-3); }
+
+  .card-number { display: block; font-family: var(--serif-en); font-size: 1.5rem; color: var(--gold); }
+  .card-title { display: block; margin-top: 2px; font-family: var(--serif-en); font-weight: 500; font-size: 1.35rem; color: var(--ivory); }
+  .card-sub { display: block; margin-top: 4px; font-family: var(--sans-jp); font-size: 0.75rem; color: var(--ivory-muted); }
+  .card-view {
+    position: relative;
+    display: inline-block;
+    margin-top: var(--sp-2);
+    font-family: var(--sans-en);
+    font-weight: 500;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* ============================================================
+     About / Story
+  ============================================================ */
+  .site-about {
+    display: grid;
+    grid-template-columns: 42% 1fr;
+    gap: var(--sp-6);
+    padding: 0 var(--sp-6) var(--sp-9);
+    align-items: center;
+  }
+
+  .about-heading {
+    font-family: var(--serif-jp);
+    font-weight: 500;
+    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+    line-height: 1.5;
+    margin: var(--sp-2) 0 var(--sp-3);
+  }
+
+  .about-body {
+    font-family: var(--sans-jp);
+    font-weight: 300;
+    font-size: 0.9375rem;
+    line-height: 1.9;
+    color: var(--ivory-muted);
+    max-width: 46ch;
+    margin: 0 0 var(--sp-4);
+  }
+
+  .about-media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: radial-gradient(circle at 24% 74%, rgba(255, 214, 150, 0.32) 0%, transparent 46%),
+      linear-gradient(200deg, #3d3220 0%, #221c17 46%, #100e0b 100%);
+  }
+
+  .play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    background: rgba(15, 13, 10, 0.4);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ivory);
+  }
+
+  .play-btn svg { width: 16px; height: 16px; margin-left: 2px; }
+
+  /* ============================================================
+     Footer
+  ============================================================ */
+  .site-footer {
+    background: var(--bg-surface);
+    border-top: 1px solid var(--gold-dim);
+    padding: var(--sp-6) var(--sp-6) var(--sp-4);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: var(--sp-5);
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .footer-logo { font-family: var(--serif-en); color: var(--gold); font-size: 1rem; letter-spacing: 0.06em; margin: 0; }
+
+  .footer-col h4 {
+    font-family: var(--sans-en);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ivory-faint);
+    margin: 0 0 var(--sp-2);
+    font-weight: 500;
+  }
+
+  .footer-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .footer-col a { font-family: var(--sans-jp); font-size: 0.8125rem; color: var(--ivory-muted); }
+
+  .footer-bottom {
+    max-width: 1440px;
+    margin: var(--sp-5) auto 0;
+    padding-top: var(--sp-3);
+    border-top: 1px solid var(--gold-dim);
+    font-family: var(--sans-en);
+    font-size: 0.68rem;
+    color: var(--ivory-faint);
+  }
+
+
+  /* ============================================================
+     Responsive  (2026-09-09 追加)
+
+     これまでレスポンシブ指定が一切無く、375px幅では
+     5列グリッドが崩れずに残るせいでページ幅が689pxになり、
+     カードが 30x38px まで潰れていた。その修正。
+
+     1200px超（＝確認済みのPC表示 1936px を含む）には
+     一切の指定が効かないようにしてあるので、PCの見た目は不変。
+  ============================================================ */
+
+  /* --- 大きめのノートPC / 横向きタブレット --- */
+  @media (max-width: 1200px) {
+    .site-grid-inner { grid-template-columns: repeat(3, 1fr); }
+    .site-header { padding: 0 var(--sp-4); }
+    .site-nav { gap: var(--sp-3); }
+    .site-grid { padding: 0 var(--sp-4) var(--sp-7); }
+    .site-about { padding: 0 var(--sp-4) var(--sp-7); }
+    .site-footer { padding: var(--sp-5) var(--sp-4) var(--sp-4); }
+  }
+
+  /* --- ヘッダーのナビが入りきらなくなる幅。ハンバーガーへ渡す --- */
+  @media (max-width: 1080px) {
+    .site-nav { display: none; }
+    .hamburger { display: flex; }
+  }
+
+  /* --- タブレット縦 --- */
+  @media (max-width: 900px) {
+    .site-grid-inner { grid-template-columns: repeat(2, 1fr); }
+    .site-about { grid-template-columns: 1fr; gap: var(--sp-4); }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: var(--sp-4); }
+    .site-intro { padding: var(--sp-7) var(--sp-4); }
+  }
+
+  /* --- スマートフォン --- */
+  @media (max-width: 560px) {
+    .site-header { height: 64px; padding: 0 var(--sp-3); }
+    .site-logo { font-size: 1rem; letter-spacing: 0.06em; }
+    .header-actions { gap: var(--sp-2); }
+    .header-actions svg { width: 16px; height: 16px; }
+    .lang-toggle { height: 26px; padding: 0 6px; gap: 4px; }
+
+    .site-hero { height: auto; min-height: 88vh; padding: var(--sp-8) 0 var(--sp-7); }
+    .hero-copy { max-width: none; padding: 0 var(--sp-3); }
+    /* スマホでは文字が画面幅いっぱいに載るので、PCの「左だけ暗い」グラデーションでは
+       明るいカットのときに読みにくくなる。縦方向の均一な覆いに置き換える。
+       PC(561px以上)のグラデーションには触れていない。 */
+    .hero-overlay {
+      background: linear-gradient(180deg, rgba(15, 13, 10, 0.62) 0%, rgba(15, 13, 10, 0.5) 38%, rgba(15, 13, 10, 0.72) 78%, rgba(15, 13, 10, 0.9) 100%);
+    }
+    .hero-tagline { font-size: 0.9rem; line-height: 1.85; }
+    .btn { padding: 13px 26px; font-size: 0.75rem; }
+
+    .site-intro { padding: var(--sp-6) var(--sp-3); }
+    .site-grid { padding: 0 var(--sp-3) var(--sp-6); }
+
+    /* 1列。5枚を無理に並べず、写真を大きく見せる。 */
+    .site-grid-inner { grid-template-columns: 1fr; gap: var(--sp-2); }
+    .card-copy { padding: var(--sp-3) var(--sp-3) var(--sp-2); }
+    .card-number { font-size: 1.3rem; }
+    .card-title { font-size: 1.5rem; }
+    .card-sub { font-size: 0.8125rem; }
+    .card-view { font-size: 0.72rem; margin-top: 10px; }
+
+    .site-about { padding: 0 var(--sp-3) var(--sp-6); }
+    .about-body { font-size: 0.9rem; max-width: none; }
+
+    .site-footer { padding: var(--sp-5) var(--sp-3) var(--sp-3); }
+    .footer-grid { grid-template-columns: 1fr; gap: var(--sp-4); }
+    .footer-bottom { margin-top: var(--sp-4); font-size: 0.62rem; }
+  }
+
+  /* --- 指で押せる大きさを確保（マウスが無い端末） --- */
+  @media (hover: none) {
+    .lang-menu button { padding: 12px 14px; }
+    .card-view { padding: 4px 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-photo, .card-photo { animation: none !important; transition-duration: 1ms !important; }
+    /* 動きを抑える設定の人には背景動画も再生しない（下地のグラデーションを表示） */
+    .hero-video { display: none !important; }
+  }
+</style>
+
+<header class="site-header" id="siteHeader">
+  <span class="site-logo">COLOR GARDEN</span>
+  <nav>
+    <ul class="site-nav">
+      <li><a href="#" data-i18n="nav.travel">Travel</a></li>
+      <li><a href="#" data-i18n="nav.music">Music</a></li>
+      <li><a href="#" data-i18n="nav.shop">Shop</a></li>
+      <li><a href="#" data-i18n="nav.digital">Digital</a></li>
+      <li><a href="#" data-i18n="nav.creative">Creative</a></li>
+      <li><a href="#" data-i18n="nav.about">About</a></li>
+    </ul>
+  </nav>
+  <div class="header-actions">
+    <!-- 言語切替（2026-09-09 追加）。PC・スマホ共通で、どの幅でも表示する。 -->
+    <div class="lang-switch" id="langSwitch">
+      <button class="lang-toggle" id="langToggle" aria-haspopup="listbox" aria-expanded="false"
+              aria-label="表示言語を選ぶ" data-i18n-aria="a11y.language">
+        <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18" /></svg>
+        <span id="langCurrent">JA</span>
+        <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" /></svg>
+      </button>
+      <ul class="lang-menu" id="langMenu" role="listbox" aria-label="Language"></ul>
+    </div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="4" /><circle cx="12" cy="12" r="4" /></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M14 4c0 2.2 1.8 4 4 4v2.5A6.5 6.5 0 0 1 14 9v6.5a5 5 0 1 1-5-5c.35 0 .68.03 1 .1V13a2.5 2.5 0 1 0 2 2.45V4h2z" /></svg>
+    <button class="hamburger" id="menuOpen" aria-label="メニュー" aria-expanded="false" data-i18n-aria="a11y.menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- モバイルメニュー（2026-09-09 追加）。1080px以下でヘッダーのナビの代わりになる。 -->
+<div class="mobile-menu" id="mobileMenu" hidden>
+  <button class="mobile-menu-close" id="menuClose" aria-label="メニューを閉じる" data-i18n-aria="a11y.close">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 6l12 12M18 6L6 18" /></svg>
+  </button>
+  <span class="site-logo">COLOR GARDEN</span>
+  <ul class="mobile-nav">
+    <li><a href="#" data-i18n="nav.travel">Travel</a></li>
+    <li><a href="#" data-i18n="nav.music">Music</a></li>
+    <li><a href="#" data-i18n="nav.shop">Shop</a></li>
+    <li><a href="#" data-i18n="nav.digital">Digital</a></li>
+    <li><a href="#" data-i18n="nav.creative">Creative</a></li>
+    <li><a href="#" data-i18n="nav.about">About</a></li>
+  </ul>
+</div>
+
+<section class="site-hero">
+  <div class="hero-photo"></div>
+  <video class="hero-video" id="heroVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1">
+    <source src="assets/hero.mp4" type="video/mp4" />
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="hero-copy">
+    <p class="hero-eyebrow" data-i18n="hero.eyebrow">Luxury Travel · Original Sound · Creative Life</p>
+    <h1 class="hero-title">COLOR GARDEN</h1>
+    <p class="hero-tagline" data-i18n-html="hero.tagline">美しい景色を歩き、心を動かす音に耳を澄まし、<br />日々の暮らしに彩りを添える。</p>
+    <a href="#" class="btn"><span data-i18n="hero.cta">EXPLORE</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
+  </div>
+</section>
+
+<section class="site-intro">
+  <p class="hero-eyebrow" data-i18n="intro.eyebrow">Explore Our World</p>
+  <h2 class="intro-headline" data-i18n="intro.headline">Discover. Feel. Be inspired.</h2>
+  <div class="intro-rule"></div>
+</section>
+
+<section class="site-grid">
+  <div class="site-grid-inner">
+    <div class="card">
+      <div class="card-photo photo-travel">
+        <img class="card-img card-img--fit card-img--travel" src="assets/card-01-travel.jpg" alt="" />
+      </div>
+      <div class="card-overlay"></div>
+      <div class="card-copy">
+        <span class="card-number">01</span><span class="card-title" data-i18n="card.travel.title">TRAVEL</span><span class="card-sub" data-i18n="card.travel.sub">美しい景色と旅の記録</span>
+        <span class="card-view" data-i18n="card.view">VIEW MORE</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-photo photo-music">
+        <img class="card-img card-img--fit" src="assets/card-02-music.jpg" alt="" />
+      </div>
+      <div class="card-overlay"></div>
+      <div class="card-copy">
+        <span class="card-number">02</span><span class="card-title" data-i18n="card.music.title">MUSIC</span><span class="card-sub" data-i18n="card.music.sub">オリジナル楽曲</span>
+        <span class="card-view" data-i18n="card.view">VIEW MORE</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-photo photo-shop">
+        <img class="card-img card-img--fit" src="assets/card-03-shop.jpg" alt="" />
+      </div>
+      <div class="card-overlay"></div>
+      <div class="card-copy">
+        <span class="card-number">03</span><span class="card-title" data-i18n="card.shop.title">SHOP</span><span class="card-sub" data-i18n="card.shop.sub">アパレル・グッズ</span>
+        <span class="card-view" data-i18n="card.view">VIEW MORE</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-photo photo-digital">
+        <img class="card-img card-img--fit card-img--digital" src="assets/card-04-digital.jpg" alt="" />
+      </div>
+      <div class="card-overlay"></div>
+      <div class="card-copy">
+        <span class="card-number">04</span><span class="card-title" data-i18n="card.digital.title">DIGITAL</span><span class="card-sub" data-i18n="card.digital.sub">ノウハウ・デジタル商品</span>
+        <span class="card-view" data-i18n="card.view">VIEW MORE</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-photo photo-creative">
+        <img class="card-img card-img--fit" src="assets/card-05-creative.jpg" alt="" />
+      </div>
+      <div class="card-overlay"></div>
+      <div class="card-copy">
+        <span class="card-number">05</span><span class="card-title" data-i18n="card.creative.title">CREATIVE</span><span class="card-sub" data-i18n="card.creative.sub">映像制作・クリエイティブ活動</span>
+        <span class="card-view" data-i18n="card.view">VIEW MORE</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="site-about">
+  <div>
+    <p class="hero-eyebrow" data-i18n="about.eyebrow">About Color Garden</p>
+    <h2 class="about-heading" data-i18n="about.heading">彩りある人生を、あなたに。</h2>
+    <p class="about-body" data-i18n="about.body">
+      COLOR GARDENは、旅・音楽・ものづくりを通じて、日常に小さな感動をもたらすライフスタイルブランドです。美しい景色に心を動かされる瞬間、耳に残る一節の旋律、丁寧に作られたプロダクト——そのひとつひとつが、あなたの毎日に新しい彩りを加えていきます。
+    </p>
+    <a href="#" class="btn"><span data-i18n="about.cta">OUR STORY</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
+  </div>
+  <div class="about-media">
+    <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-col"><p class="footer-logo">COLOR GARDEN</p></div>
+    <div class="footer-col">
+      <h4 data-i18n="footer.nav">Navigation</h4>
+      <ul><li><a href="#" data-i18n="nav.travel">Travel</a></li><li><a href="#" data-i18n="nav.music">Music</a></li><li><a href="#" data-i18n="nav.shop">Shop</a></li><li><a href="#" data-i18n="nav.digital">Digital</a></li><li><a href="#" data-i18n="nav.creative">Creative</a></li><li><a href="#" data-i18n="nav.about">About</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="footer.support">Support</h4>
+      <ul><li><a href="#" data-i18n="footer.contact">Contact</a></li><li><a href="#" data-i18n="footer.faq">FAQ</a></li><li><a href="#" data-i18n="footer.privacy">Privacy Policy</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="footer.follow">Follow Us</h4>
+      <ul><li><a href="#">Instagram</a></li><li><a href="#">TikTok</a></li><li><a href="#">YouTube</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom" data-i18n="footer.copyright">© 2026 COLOR GARDEN. ALL RIGHTS RESERVED.</div>
+</footer>
+
+<script>
+  /* ==================================================================
+     多言語（2026-09-09 追加）
+
+     方針: ページは1枚だけ。言語ごとにHTMLを複製しない。
+           訳文は src/i18n.json の1ファイルに集約し、ビルド時にここへ埋める。
+           文章を直すときは i18n.json だけを直せばよい。
+
+     対応: ja / en / fr / es / ko
+     優先順位: ①ユーザーが選んだ言語（localStorage）
+               ②ブラウザの言語設定（navigator.languages）
+               ③日本語
+           ①は②より必ず強い。一度選んだら次回もその言語で開く。
+
+     ブランド名 COLOR GARDEN は翻訳対象に入れていない（HTMLに直書きのまま）。
+  ================================================================== */
+  var CG_I18N = {"_langs":[{"code":"ja","label":"JA","native":"日本語","htmlLang":"ja"},{"code":"en","label":"EN","native":"English","htmlLang":"en"},{"code":"fr","label":"FR","native":"Français","htmlLang":"fr"},{"code":"es","label":"ES","native":"Español","htmlLang":"es"},{"code":"ko","label":"KO","native":"한국어","htmlLang":"ko"}],"ja":{"meta.title":"COLOR GARDEN","nav.travel":"Travel","nav.music":"Music","nav.shop":"Shop","nav.digital":"Digital","nav.creative":"Creative","nav.about":"About","hero.eyebrow":"Luxury Travel · Original Sound · Creative Life","hero.tagline":"美しい景色を歩き、心を動かす音に耳を澄まし、<br />日々の暮らしに彩りを添える。","hero.cta":"EXPLORE","intro.eyebrow":"Explore Our World","intro.headline":"Discover. Feel. Be inspired.","card.travel.title":"TRAVEL","card.travel.sub":"美しい景色と旅の記録","card.music.title":"MUSIC","card.music.sub":"オリジナル楽曲","card.shop.title":"SHOP","card.shop.sub":"アパレル・グッズ","card.digital.title":"DIGITAL","card.digital.sub":"ノウハウ・デジタル商品","card.creative.title":"CREATIVE","card.creative.sub":"映像制作・クリエイティブ活動","card.view":"VIEW MORE","about.eyebrow":"About Color Garden","about.heading":"彩りある人生を、あなたに。","about.body":"COLOR GARDENは、旅・音楽・ものづくりを通じて、日常に小さな感動をもたらすライフスタイルブランドです。美しい景色に心を動かされる瞬間、耳に残る一節の旋律、丁寧に作られたプロダクト——そのひとつひとつが、あなたの毎日に新しい彩りを加えていきます。","about.cta":"OUR STORY","footer.nav":"Navigation","footer.support":"Support","footer.follow":"Follow Us","footer.contact":"Contact","footer.faq":"FAQ","footer.privacy":"Privacy Policy","footer.copyright":"© 2026 COLOR GARDEN. ALL RIGHTS RESERVED.","a11y.menu":"メニュー","a11y.language":"表示言語を選ぶ","a11y.close":"メニューを閉じる"},"en":{"meta.title":"COLOR GARDEN","nav.travel":"Travel","nav.music":"Music","nav.shop":"Shop","nav.digital":"Digital","nav.creative":"Creative","nav.about":"About","hero.eyebrow":"Luxury Travel · Original Sound · Creative Life","hero.tagline":"Walk through landscapes that move you, listen for the melody that lingers,<br />and let color settle into every ordinary day.","hero.cta":"EXPLORE","intro.eyebrow":"Explore Our World","intro.headline":"Discover. Feel. Be inspired.","card.travel.title":"TRAVEL","card.travel.sub":"Landscapes worth the journey","card.music.title":"MUSIC","card.music.sub":"Original compositions","card.shop.title":"SHOP","card.shop.sub":"Apparel and objects","card.digital.title":"DIGITAL","card.digital.sub":"Knowledge, in digital form","card.creative.title":"CREATIVE","card.creative.sub":"Film and creative direction","card.view":"VIEW MORE","about.eyebrow":"About COLOR GARDEN","about.heading":"A life lived in full color.","about.body":"COLOR GARDEN is a lifestyle house built around travel, music and craft — a search for the small moments that move us. A view that stops you mid-step, a phrase of melody that stays for days, an object made with real care: each one adds another shade to the life you are already living.","about.cta":"OUR STORY","footer.nav":"Navigation","footer.support":"Support","footer.follow":"Follow Us","footer.contact":"Contact","footer.faq":"FAQ","footer.privacy":"Privacy Policy","footer.copyright":"© 2026 COLOR GARDEN. ALL RIGHTS RESERVED.","a11y.menu":"Menu","a11y.language":"Choose a language","a11y.close":"Close menu"},"fr":{"meta.title":"COLOR GARDEN","nav.travel":"Voyage","nav.music":"Musique","nav.shop":"Boutique","nav.digital":"Digital","nav.creative":"Création","nav.about":"À propos","hero.eyebrow":"Voyage d'exception · Son original · Vie créative","hero.tagline":"Parcourir des paysages qui émeuvent, écouter la mélodie qui demeure,<br />et laisser la couleur entrer dans chaque jour.","hero.cta":"EXPLORER","intro.eyebrow":"Explorez notre univers","intro.headline":"Découvrir. Ressentir. S'inspirer.","card.travel.title":"VOYAGE","card.travel.sub":"Paysages et carnets de route","card.music.title":"MUSIQUE","card.music.sub":"Compositions originales","card.shop.title":"BOUTIQUE","card.shop.sub":"Prêt-à-porter et objets","card.digital.title":"DIGITAL","card.digital.sub":"Savoir-faire et produits numériques","card.creative.title":"CRÉATION","card.creative.sub":"Films et direction créative","card.view":"DÉCOUVRIR","about.eyebrow":"À propos de COLOR GARDEN","about.heading":"Une vie en couleurs.","about.body":"COLOR GARDEN est une maison de lifestyle née du voyage, de la musique et du geste artisanal — la recherche de ces instants qui nous émeuvent. Un paysage qui suspend le pas, une mélodie qui reste des jours durant, un objet façonné avec soin : chacun ajoute une nuance à la vie que vous menez déjà.","about.cta":"NOTRE HISTOIRE","footer.nav":"Navigation","footer.support":"Assistance","footer.follow":"Nous suivre","footer.contact":"Contact","footer.faq":"FAQ","footer.privacy":"Politique de confidentialité","footer.copyright":"© 2026 COLOR GARDEN. TOUS DROITS RÉSERVÉS.","a11y.menu":"Menu","a11y.language":"Choisir une langue","a11y.close":"Fermer le menu"},"es":{"meta.title":"COLOR GARDEN","nav.travel":"Viajes","nav.music":"Música","nav.shop":"Tienda","nav.digital":"Digital","nav.creative":"Creativo","nav.about":"Nosotros","hero.eyebrow":"Viajes de autor · Sonido original · Vida creativa","hero.tagline":"Recorrer paisajes que conmueven, escuchar la melodía que permanece<br />y dejar que el color habite cada día.","hero.cta":"EXPLORAR","intro.eyebrow":"Explora nuestro mundo","intro.headline":"Descubrir. Sentir. Inspirarse.","card.travel.title":"VIAJES","card.travel.sub":"Paisajes y cuadernos de viaje","card.music.title":"MÚSICA","card.music.sub":"Composiciones originales","card.shop.title":"TIENDA","card.shop.sub":"Prendas y objetos","card.digital.title":"DIGITAL","card.digital.sub":"Conocimiento y productos digitales","card.creative.title":"CREATIVO","card.creative.sub":"Cine y dirección creativa","card.view":"DESCUBRIR","about.eyebrow":"Sobre COLOR GARDEN","about.heading":"Una vida llena de color.","about.body":"COLOR GARDEN es una casa de lifestyle nacida del viaje, la música y el oficio: la búsqueda de esos instantes que nos conmueven. Un paisaje que detiene el paso, una melodía que permanece durante días, un objeto hecho con verdadero cuidado. Cada uno añade un matiz nuevo a la vida que ya habitas.","about.cta":"NUESTRA HISTORIA","footer.nav":"Navegación","footer.support":"Atención","footer.follow":"Síguenos","footer.contact":"Contacto","footer.faq":"Preguntas frecuentes","footer.privacy":"Política de privacidad","footer.copyright":"© 2026 COLOR GARDEN. TODOS LOS DERECHOS RESERVADOS.","a11y.menu":"Menú","a11y.language":"Elegir idioma","a11y.close":"Cerrar el menú"},"ko":{"meta.title":"COLOR GARDEN","nav.travel":"여행","nav.music":"음악","nav.shop":"스토어","nav.digital":"디지털","nav.creative":"크리에이티브","nav.about":"브랜드 소개","hero.eyebrow":"럭셔리 트래블 · 오리지널 사운드 · 크리에이티브 라이프","hero.tagline":"마음을 움직이는 풍경을 걷고,<br />오래 남는 선율에 귀 기울이며,<br />일상에 색을 더합니다.","hero.cta":"둘러보기","intro.eyebrow":"우리의 세계","intro.headline":"발견하고, 느끼고, 영감을 얻다.","card.travel.title":"여행","card.travel.sub":"마음을 움직인 풍경의 기록","card.music.title":"음악","card.music.sub":"오리지널 음악","card.shop.title":"스토어","card.shop.sub":"의류와 오브제","card.digital.title":"디지털","card.digital.sub":"노하우와 디지털 제품","card.creative.title":"크리에이티브","card.creative.sub":"영상 제작과 크리에이티브","card.view":"더 보기","about.eyebrow":"COLOR GARDEN 소개","about.heading":"삶에 색을 더하다.","about.body":"COLOR GARDEN은 여행과 음악, 그리고 만드는 일을 통해 일상에 작은 감동을 전하는 라이프스타일 브랜드입니다. 발길을 멈추게 하는 풍경, 오래 맴도는 한 소절의 선율, 정성으로 완성한 물건 — 그 하나하나가 지금의 하루에 새로운 색을 더합니다.","about.cta":"브랜드 스토리","footer.nav":"메뉴","footer.support":"고객 지원","footer.follow":"팔로우","footer.contact":"문의","footer.faq":"자주 묻는 질문","footer.privacy":"개인정보 처리방침","footer.copyright":"© 2026 COLOR GARDEN. ALL RIGHTS RESERVED.","a11y.menu":"메뉴","a11y.language":"언어 선택","a11y.close":"메뉴 닫기"}};
+
+  (function () {
+    var STORE_KEY = "cg-homepage-lang";
+    var LANGS = CG_I18N._langs;
+    var CODES = LANGS.map(function (l) { return l.code; });
+    var DEFAULT = "ja";
+
+    var root = document.documentElement;
+    root.classList.add("i18n-pending");
+
+    function read() {
+      try { return window.localStorage.getItem(STORE_KEY); } catch (e) { return null; }
+    }
+    function write(code) {
+      try { window.localStorage.setItem(STORE_KEY, code); } catch (e) { /* プライベートモード等。保存できなくても表示は続ける */ }
+    }
+
+    /* ブラウザの言語設定から一番近いものを選ぶ。"fr-CA" のような地域つきも拾う。 */
+    function fromBrowser() {
+      var list = (navigator.languages && navigator.languages.length)
+        ? navigator.languages
+        : [navigator.language || navigator.userLanguage || ""];
+      for (var i = 0; i < list.length; i++) {
+        var tag = String(list[i]).toLowerCase();
+        var base = tag.split("-")[0];
+        if (CODES.indexOf(base) >= 0) return base;
+      }
+      return null;
+    }
+
+    function pickInitial() {
+      var saved = read();
+      if (saved && CODES.indexOf(saved) >= 0) return saved;   /* 手動選択が最優先 */
+      return fromBrowser() || DEFAULT;
+    }
+
+    function apply(code) {
+      var dict = CG_I18N[code];
+      if (!dict) { code = DEFAULT; dict = CG_I18N[DEFAULT]; }
+      var meta = LANGS.filter(function (l) { return l.code === code; })[0] || LANGS[0];
+
+      root.setAttribute("lang", meta.htmlLang);
+
+      var i, nodes;
+      nodes = document.querySelectorAll("[data-i18n]");
+      for (i = 0; i < nodes.length; i++) {
+        var k = nodes[i].getAttribute("data-i18n");
+        if (dict[k] != null) nodes[i].textContent = dict[k];
+      }
+      /* <br> を含む文だけ innerHTML。値はこちらが用意した訳文のみで、外部入力は入らない。 */
+      nodes = document.querySelectorAll("[data-i18n-html]");
+      for (i = 0; i < nodes.length; i++) {
+        var kh = nodes[i].getAttribute("data-i18n-html");
+        if (dict[kh] != null) nodes[i].innerHTML = dict[kh];
+      }
+      nodes = document.querySelectorAll("[data-i18n-aria]");
+      for (i = 0; i < nodes.length; i++) {
+        var ka = nodes[i].getAttribute("data-i18n-aria");
+        if (dict[ka] != null) nodes[i].setAttribute("aria-label", dict[ka]);
+      }
+
+      if (dict["meta.title"]) document.title = dict["meta.title"];
+
+      var cur = document.getElementById("langCurrent");
+      if (cur) cur.textContent = meta.label;
+
+      var opts = document.querySelectorAll("#langMenu button");
+      for (i = 0; i < opts.length; i++) {
+        opts[i].setAttribute("aria-selected", opts[i].getAttribute("data-lang") === code ? "true" : "false");
+      }
+      current = code;
+    }
+
+    var current = DEFAULT;
+
+    /* --- 言語メニューを組み立てる --- */
+    var menu = document.getElementById("langMenu");
+    var switchEl = document.getElementById("langSwitch");
+    var toggle = document.getElementById("langToggle");
+
+    if (menu) {
+      for (var i = 0; i < LANGS.length; i++) {
+        var l = LANGS[i];
+        var li = document.createElement("li");
+        var b = document.createElement("button");
+        b.type = "button";
+        b.setAttribute("role", "option");
+        b.setAttribute("data-lang", l.code);
+        b.setAttribute("lang", l.htmlLang);
+        b.innerHTML = '<span class="lang-code"></span><span class="lang-name"></span>';
+        b.firstChild.textContent = l.label;
+        b.lastChild.textContent = l.native;
+        b.addEventListener("click", (function (code) {
+          return function () { write(code); apply(code); close(); };
+        })(l.code));
+        li.appendChild(b);
+        menu.appendChild(li);
+      }
+    }
+
+    function open() { if (switchEl) { switchEl.classList.add("is-open"); toggle.setAttribute("aria-expanded", "true"); } }
+    function close() { if (switchEl) { switchEl.classList.remove("is-open"); toggle.setAttribute("aria-expanded", "false"); } }
+
+    if (toggle) {
+      toggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        if (switchEl.classList.contains("is-open")) close(); else open();
+      });
+      document.addEventListener("click", function (e) {
+        if (switchEl && !switchEl.contains(e.target)) close();
+      });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+    }
+
+    apply(pickInitial());
+    root.classList.remove("i18n-pending");
+  })();
+
+  /* ------------------------------------------------------------------
+     モバイルメニュー（2026-09-09 追加）
+     1080px以下でヘッダーのナビを隠すため、その代わりの導線。
+     これまでハンバーガーは飾りで、押しても何も起きなかった。
+  ------------------------------------------------------------------ */
+  (function () {
+    var openBtn = document.getElementById("menuOpen");
+    var closeBtn = document.getElementById("menuClose");
+    var panel = document.getElementById("mobileMenu");
+    if (!openBtn || !panel) return;
+
+    function show() {
+      panel.hidden = false;
+      /* hidden を外した直後だと transition が効かないので1フレーム待つ */
+      window.requestAnimationFrame(function () { panel.classList.add("is-open"); });
+      openBtn.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+    }
+    function hide() {
+      panel.classList.remove("is-open");
+      openBtn.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+      window.setTimeout(function () { if (!panel.classList.contains("is-open")) panel.hidden = true; }, 300);
+    }
+
+    openBtn.addEventListener("click", show);
+    if (closeBtn) closeBtn.addEventListener("click", hide);
+    panel.addEventListener("click", function (e) { if (e.target.tagName === "A") hide(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") hide(); });
+    /* PC幅に戻したときに開きっぱなしにしない */
+    window.addEventListener("resize", function () { if (window.innerWidth > 1080) hide(); });
+  })();
+</script>
+
+<script>
+  var header = document.getElementById("siteHeader");
+  window.addEventListener("scroll", function () {
+    header.classList.toggle("is-scrolled", window.scrollY > 40);
+  }, { passive: true });
+
+  /* ヒーロー背景動画（2026-09-08 追加）
+     再生できることを確認してから表示する。自動再生が拒否された環境や
+     デコードに失敗した環境では、下地のグラデーションがそのまま残る。
+
+     autoplay 属性だけに頼らないのは、ブラウザが次の状況で自動再生を見送るため:
+       - 非表示タブ（バックグラウンドで開かれた／別タブに切り替わっている）
+       - 省電力モードや自動再生ブロック設定
+     いずれも「表示された時」「最初の操作の時」に静かに再生を始めれば足りる。 */
+  (function () {
+    var v = document.getElementById("heroVideo");
+    if (!v) return;
+
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) { v.pause(); return; }
+
+    function show() { v.classList.add("is-ready"); }
+    function tryPlay() {
+      if (!v.paused) return;
+      var p = v.play();
+      if (p && typeof p.catch === "function") p.catch(function () { /* 後で再試行する */ });
+    }
+
+    if (v.readyState >= 2) show();
+    v.addEventListener("loadeddata", function () { show(); tryPlay(); }, { once: true });
+    v.addEventListener("error", function () { v.classList.remove("is-ready"); });
+
+    tryPlay();
+
+    /* タブが表示された時に再生を開始する（非表示のまま開かれた場合の受け皿） */
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") tryPlay();
+    });
+    window.addEventListener("focus", tryPlay);
+
+    /* それでも始まらない環境のために、最初の操作でも試す */
+    window.addEventListener("pointerdown", tryPlay, { once: true });
+    window.addEventListener("keydown", tryPlay, { once: true });
+
+    /* ------------------------------------------------------------------
+       カットごとの見せ方（2026-09-09 追加）
+
+       PCのChromeではHeroが動画より横長になるため、cover は縦を約170px削る。
+       どの帯を残すかは object-position で決まるが、この動画は
+         浜辺の跳躍  … 女性の髪が上端32pxまで達する（上を削れない）
+         カプリ      … 女性が下端1011pxまで写っている（下を削れない）
+       と要求が真逆で、ひとつの値では両立しない（必要979px > 見える851px）。
+
+       そこでカット点（実測: 2.05 / 4.35 / 7.5 / 9.35秒）で値を切り替える。
+       切り替わるのは画が変わる瞬間なので、動いて見えることはない。
+       ------------------------------------------------------------------ */
+    var SHOTS = [
+      { until: 2.05,  pos: "80%" },  // ヴェネツィア（建築）
+      { until: 4.35,  pos: "80%" },  // カプリ（女性が下端まで写る）
+      { until: 7.50,  pos: "19%" },  // 浜辺（踊り→跳躍。髪が上端32pxまで達する）
+      { until: 9.35,  pos: "80%" },  // リール（歩く女性・足元まで）
+      { until: 99,    pos: "80%" },  // 京都（塔の先端と灯籠）
+    ];
+    var lastPos = null;
+    function applyShot() {
+      var t = v.currentTime;
+      var pos = "80%";
+      for (var i = 0; i < SHOTS.length; i++) {
+        if (t < SHOTS[i].until) { pos = SHOTS[i].pos; break; }
+      }
+      if (pos !== lastPos) { v.style.objectPosition = "center " + pos; lastPos = pos; }
+    }
+
+    /* 表示フレームごとに呼ばれるので、カットと完全に同じタイミングで切り替わる。
+       requestAnimationFrame は非表示タブで止まるため使わない。 */
+    if (typeof v.requestVideoFrameCallback === "function") {
+      var onFrame = function () { applyShot(); v.requestVideoFrameCallback(onFrame); };
+      v.requestVideoFrameCallback(onFrame);
+    }
+    /* 非対応ブラウザと、シーク・再生開始時の取りこぼしを拾う */
+    v.addEventListener("timeupdate", applyShot);
+    v.addEventListener("seeked", applyShot);
+    v.addEventListener("play", applyShot);
+    applyShot();
+  })();
+</script>
+
+</body>
+</html>
