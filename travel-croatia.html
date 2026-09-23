@@ -1,0 +1,1664 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="cg-build" content="b0ac0a0dbb76" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  /* Artifact ランタイムが公開ページに入れる最小リセットと同じもの */
+  :root { color-scheme: light; }
+  body { margin: 0; font: 14px system-ui, -apple-system, "Segoe UI", sans-serif; background: #fafaf9; }
+  img, video { max-width: 100%; }
+</style>
+</head>
+<body>
+<title>COLOR GARDEN — Croatia</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+  /* ------------------------------------------------------------------
+     最新版チェック（2026-09-19）
+     GitHub Pages は index.html を含む全ファイルを Cache-Control: max-age=600 で返し、変更できない。
+     そのため公開直後の10分間や、公開前から開いていたタブでは古い版が出ることがあった。
+     公開版には <meta name="cg-build"> と version.json が入る（publish-homepage.js が付ける）。
+     読み込み時とタブに戻ったときに version.json をキャッシュなしで確かめ、
+     新しい版があれば1回だけ読み直す。ローカル表示やArtifactでは meta が無いので何もしない。
+  ------------------------------------------------------------------ */
+  (function () {
+    var meta = document.querySelector('meta[name="cg-build"]');
+    if (!meta || !window.fetch || !/^https?:$/.test(location.protocol)) return;
+    var mine = meta.getAttribute("content");
+    var KEY = "cg-build-reload";
+
+    /* 前回この仕組みで読み直した場合は、付けた目印（?_b=）をURLから外す（見た目だけ） */
+    try {
+      var cur = new URL(location.href);
+      if (cur.searchParams.has("_b")) { cur.searchParams.delete("_b"); history.replaceState(history.state, "", cur.pathname + cur.search + cur.hash); }
+    } catch (e) {}
+
+    function check() {
+      fetch("version.json?t=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) {
+          if (!j || !j.version || j.version === mine) return;
+          var tried = null;
+          try { tried = sessionStorage.getItem(KEY); } catch (e) {}
+          if (tried === j.version) return;               /* 同じ版への読み直しは1回だけ（無限ループ防止） */
+          try { sessionStorage.setItem(KEY, j.version); } catch (e) {}
+          var u = new URL(location.href);
+          u.searchParams.set("_b", j.version);           /* 新しいURLにしてブラウザの古い控えを使わせない */
+          location.replace(u.toString());
+        })
+        .catch(function () {});
+    }
+    check();
+    document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") check(); });
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Shippori+Mincho:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  /* Design tokens — identical to the confirmed COLOR GARDEN Style Guide.
+     Nothing site-wide changes here; the pink/blue hues below are declared
+     only inside the Music card rules further down. */
+  :root {
+    --bg-primary: #14120e;
+    --bg-surface: #1d1a15;
+    --bg-surface-deep: #0f0d0a;
+
+    --gold: #c6a567;
+    --gold-light: #dfc28f;
+    --gold-dim: rgba(198, 165, 103, 0.35);
+
+    --ivory: #f5f1e7;
+    --ivory-muted: #beb6a4;
+    --ivory-faint: #8b8477;
+
+    --serif-en: "Cormorant Garamond", "Times New Roman", serif;
+    --serif-jp: "Shippori Mincho", "Cormorant Garamond", serif;
+    --sans-en: "Inter", -apple-system, "Hiragino Sans", sans-serif;
+    --sans-jp: "Noto Sans JP", "Inter", -apple-system, sans-serif;
+
+    /* 韓国語（2026-09-09 多言語対応で追加）。日本語・欧文の指定には触れていない。 */
+    --serif-ko: "Noto Serif KR", "Cormorant Garamond", serif;
+    --sans-ko: "Noto Sans KR", "Inter", -apple-system, sans-serif;
+
+    --sp-1: 8px; --sp-2: 16px; --sp-3: 24px; --sp-4: 32px; --sp-5: 48px;
+    --sp-6: 64px; --sp-7: 96px; --sp-8: 128px; --sp-9: 160px;
+
+    --ease-luxe: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* ------------------------------------------------------------
+     多言語（2026-09-09 追加）
+     言語切替は <html lang> を書き換えて行う。書体だけは韓国語で
+     Cormorant Garamond / Noto Sans JP にハングルが無いため差し替える。
+     ja / en / fr / es は既存のまま一切変えない。
+  ------------------------------------------------------------ */
+  html[lang="ko"] {
+    --serif-en: var(--serif-ko);
+    --serif-jp: var(--serif-ko);
+    --sans-en: var(--sans-ko);
+    --sans-jp: var(--sans-ko);
+  }
+
+  /* ブランド表記と通し番号はどの言語でも同じ書体で出す。
+     ここまで韓国語書体にすると COLOR GARDEN の字面が変わってしまう。 */
+  html[lang="ko"] .site-logo,
+  html[lang="ko"] .hero-title,
+  html[lang="ko"] .footer-logo,
+  html[lang="ko"] .card-number {
+    font-family: "Cormorant Garamond", "Times New Roman", serif;
+  }
+
+  /* 訳文が入るまでのちらつきを防ぐ。JSが最初の描画前に外す。 */
+  html.i18n-pending body { visibility: hidden; }
+
+  * { box-sizing: border-box; }
+  html { background: var(--bg-primary); }
+  body {
+    margin: 0;
+    background: var(--bg-primary);
+    color: var(--ivory);
+    font-family: var(--sans-jp);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; padding: 0; }
+  a:focus-visible, button:focus-visible { outline: 1px solid var(--gold-light); outline-offset: 3px; }
+  img, svg { display: block; max-width: 100%; }
+
+  /* ============================================================
+     Header
+  ============================================================ */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 84px;
+    padding: 0 var(--sp-6);
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background 220ms var(--ease-luxe), border-color 220ms var(--ease-luxe), backdrop-filter 220ms;
+  }
+
+  .site-header.is-scrolled {
+    background: rgba(29, 26, 21, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom-color: var(--gold-dim);
+  }
+
+  .site-logo {
+    font-family: var(--serif-en);
+    font-weight: 500;
+    font-size: 1.15rem;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+  }
+
+  .site-nav {
+    display: flex;
+    gap: var(--sp-4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .site-nav a {
+    font-family: var(--sans-en);
+    font-weight: 500;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ivory-muted);
+  }
+
+  /* ------------------------------------------------------------
+     JOURNAL（2026-09-18 追加）
+     行き先は COLOR GARDEN 公式 note（別サイト・新しいタブ）。
+     サイト上では「note」を出さず、ナビの並びに溶け込ませる。
+     外へ出ることだけは小さな矢印で控えめに知らせる。
+  ------------------------------------------------------------ */
+  .nav-ext::after {
+    content: "\2197";
+    display: inline-block;
+    margin-left: 0.3em;
+    font-size: 0.85em;
+    line-height: 1;
+    color: var(--gold);
+    opacity: 0.7;
+    transform: translateY(-0.08em);
+  }
+
+  /* 画面には出さず、読み上げだけに伝える（「新しいタブで開きます」） */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+
+  .header-actions svg { width: 17px; height: 17px; color: var(--ivory-muted); }
+
+  /* 公式SNS（2026-09-18）。見た目は既存のアイコンのまま。触れたときだけ金色に。 */
+  .header-social { display: flex; align-items: center; gap: var(--sp-2); }
+  .social-link { display: inline-flex; align-items: center; }
+  .header-actions .social-link svg, .mobile-social .social-link svg { transition: color 220ms var(--ease-luxe); }
+  .header-actions .social-link:hover svg, .header-actions .social-link:focus-visible svg,
+  .mobile-social .social-link:hover svg, .mobile-social .social-link:focus-visible svg { color: var(--gold); }
+
+  .mobile-social { display: flex; align-items: center; gap: var(--sp-4); margin-top: var(--sp-5); }
+  .mobile-social svg { width: 22px; height: 22px; color: var(--ivory-muted); }
+
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 22px;
+  }
+
+  .hamburger span {
+    display: block;
+    height: 1px;
+    background: var(--ivory);
+  }
+
+
+  /* ============================================================
+     Language switcher / Mobile menu  (2026-09-09 追加)
+     既存の配色・書体トークンだけで組んでいる。新しい色は足していない。
+  ============================================================ */
+  .lang-switch { position: relative; }
+
+  .lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 8px;
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    font-family: var(--sans-en);
+    font-weight: 500;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    color: var(--ivory-muted);
+    transition: color 220ms var(--ease-luxe), border-color 220ms var(--ease-luxe);
+  }
+  .lang-toggle:hover, .lang-switch.is-open .lang-toggle { color: var(--gold); border-color: var(--gold); }
+  .lang-toggle .globe { width: 13px; height: 13px; }
+  .lang-toggle .caret { width: 9px; height: 9px; transition: transform 220ms var(--ease-luxe); }
+  .lang-switch.is-open .lang-toggle .caret { transform: rotate(180deg); }
+
+  .lang-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 40;
+    min-width: 152px;
+    margin: 0;
+    padding: 6px 0;
+    list-style: none;
+    background: rgba(29, 26, 21, 0.97);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 220ms var(--ease-luxe), transform 220ms var(--ease-luxe), visibility 220ms;
+  }
+  .lang-switch.is-open .lang-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+
+  .lang-menu button {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 14px;
+    text-align: left;
+    color: var(--ivory-muted);
+    transition: color 180ms var(--ease-luxe), background 180ms var(--ease-luxe);
+  }
+  .lang-menu button:hover { color: var(--ivory); background: rgba(198, 165, 103, 0.1); }
+  .lang-menu button[aria-selected="true"] { color: var(--gold); }
+  .lang-code { font-family: var(--sans-en); font-weight: 500; font-size: 0.64rem; letter-spacing: 0.14em; min-width: 20px; }
+  .lang-name { font-size: 0.8125rem; }
+
+  /* ------------------------------------------------------------
+     モバイルメニュー
+     ハンバーガーはこれまで飾りだったので、ここで中身を与える。
+     1120px以下でヘッダーのナビを隠す代わりの導線であり、PCでは出ない。
+  ------------------------------------------------------------ */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    padding: var(--sp-6) var(--sp-4) var(--sp-4);
+    background: rgba(15, 13, 10, 0.98);
+    backdrop-filter: blur(14px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 280ms var(--ease-luxe), visibility 280ms;
+  }
+  .mobile-menu.is-open { opacity: 1; visibility: visible; }
+
+  .mobile-menu-close {
+    position: absolute;
+    top: 26px;
+    right: var(--sp-4);
+    width: 30px;
+    height: 30px;
+    color: var(--ivory-muted);
+  }
+  .mobile-menu-close svg { width: 18px; height: 18px; }
+
+  .mobile-nav { list-style: none; margin: var(--sp-5) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--sp-3); }
+  .mobile-nav a {
+    font-family: var(--serif-en);
+    font-size: 1.6rem;
+    letter-spacing: 0.04em;
+    color: var(--ivory);
+  }
+  html[lang="ko"] .mobile-nav a { font-size: 1.4rem; }
+
+  /* ------------------------------------------------------------
+     SUPPORT パネル（Contact / FAQ / Privacy Policy）2026-09-19
+     フッターの3リンクから開く全画面パネル。見た目はモバイルメニューと同じ系統で、
+     新しい色・書体は足していない。URL は #contact / #faq / #privacy で直接開ける。
+  ------------------------------------------------------------ */
+  .info-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: rgba(15, 13, 10, 0.985);
+    backdrop-filter: blur(14px);
+    opacity: 0;
+    visibility: hidden;
+    /* 閉じるとき：フェードし終わってから隠す */
+    transition: opacity 320ms var(--ease-luxe), visibility 0s linear 320ms;
+  }
+  /* 開くとき：すぐに表示状態にしてからフェードする。
+     こうしないと開いた直後は visibility:hidden のままで、見出しへフォーカスを移せない（2026-09-19 実測）。 */
+  .info-panel.is-open { opacity: 1; visibility: visible; transition: opacity 320ms var(--ease-luxe), visibility 0s; }
+
+  .info-panel-inner { max-width: 720px; margin: 0 auto; padding: var(--sp-8) var(--sp-4) var(--sp-7); }
+
+  .panel-close {
+    position: fixed;
+    top: 26px;
+    right: var(--sp-4);
+    z-index: 1;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ivory-muted);
+    transition: color 220ms var(--ease-luxe);
+  }
+  .panel-close:hover { color: var(--gold); }
+  .panel-close svg { width: 20px; height: 20px; }
+
+  .panel-title {
+    font-family: var(--serif-jp);
+    font-weight: 500;
+    font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+    line-height: 1.4;
+    margin: var(--sp-2) 0 var(--sp-4);
+    color: var(--ivory);
+  }
+  .panel-title:focus { outline: none; }
+
+  .info-panel p, .info-panel li {
+    font-family: var(--sans-jp);
+    font-weight: 300;
+    font-size: 0.9375rem;
+    line-height: 1.95;
+    color: var(--ivory-muted);
+  }
+  .info-panel p { margin: 0 0 var(--sp-3); }
+
+  .panel-label {
+    display: block;
+    margin: var(--sp-5) 0 var(--sp-2);
+    font-family: var(--sans-en);
+    font-weight: 500;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .panel-section { margin-top: var(--sp-5); padding-top: var(--sp-4); border-top: 1px solid var(--gold-dim); }
+  .panel-section h3 {
+    margin: 0 0 var(--sp-2);
+    font-family: var(--serif-jp);
+    font-weight: 500;
+    font-size: 1.05rem;
+    letter-spacing: 0.03em;
+    color: var(--ivory);
+  }
+  .panel-list { margin: 0 0 var(--sp-3); padding-left: 1.1em; }
+  .panel-list a, .panel-inline-link { color: var(--gold-light); border-bottom: 1px solid var(--gold-dim); }
+
+  .panel-email {
+    font-family: var(--sans-en);
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    color: var(--gold-light);
+    border-bottom: 1px solid var(--gold-dim);
+    word-break: break-all;
+  }
+  .panel-note { margin-top: var(--sp-4) !important; font-size: 0.8125rem !important; color: var(--ivory-faint) !important; }
+  .panel-date { margin-top: var(--sp-5) !important; font-family: var(--sans-en) !important; font-size: 0.75rem !important; color: var(--ivory-faint) !important; }
+
+  /* Contact：用件の一覧。押すと件名入りでメールアプリが開く */
+  .contact-topics { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--gold-dim); }
+  .contact-topics li { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--gold-dim); }
+  .contact-topics .contact-mail {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-2);
+    padding: 18px 2px;
+    font-family: var(--sans-jp);
+    font-size: 0.95rem;
+    color: var(--ivory);
+    transition: color 220ms var(--ease-luxe), padding 220ms var(--ease-luxe);
+  }
+  .contact-topics .contact-mail::after { content: "\2192"; font-family: var(--sans-en); color: var(--gold); }
+  .contact-topics .contact-mail:hover { color: var(--gold-light); padding-left: 8px; }
+  /* メールアプリが無い・設定されていない閲覧者向けの代替（Gmail の作成画面を新しいタブで開く） */
+  .contact-gmail {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    font-family: var(--sans-en);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--gold-light);
+    transition: border-color 220ms var(--ease-luxe), color 220ms var(--ease-luxe);
+  }
+  .contact-gmail:hover { border-color: var(--gold); color: var(--ivory); }
+  .contact-fallback { transition: color 320ms var(--ease-luxe), border-color 320ms var(--ease-luxe); border-left: 2px solid transparent; }
+  .contact-fallback.is-alert { color: var(--gold-light) !important; border-left-color: var(--gold); padding-left: 12px; }
+  .contact-email-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+  .contact-email-row .panel-email { user-select: all; -webkit-user-select: all; }
+  .contact-copy {
+    min-height: 36px;
+    padding: 0 12px;
+    background: none;
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    font-family: var(--sans-jp);
+    font-size: 0.75rem;
+    color: var(--gold-light);
+    cursor: pointer;
+    transition: border-color 220ms var(--ease-luxe), color 220ms var(--ease-luxe);
+  }
+  .contact-copy:hover { border-color: var(--gold); color: var(--ivory); }
+  .contact-copied { font-size: 0.75rem; color: var(--ivory-faint); }
+
+  /* FAQ：開閉式。details/summary なのでJSなしでも動く */
+  .faq-list { border-top: 1px solid var(--gold-dim); }
+  .faq-item { border-bottom: 1px solid var(--gold-dim); }
+  .faq-item summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-2);
+    padding: 20px 10px 20px 2px;  /* 右を少し広く：開いたとき「+」が45度回っても枠の内側に収まるように（韓国語の書体でも） */
+    font-family: var(--serif-jp);
+    font-weight: 500;
+    font-size: 1.02rem;
+    color: var(--ivory);
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after {
+    content: "+";
+    flex: none;
+    font-family: var(--sans-en);
+    font-weight: 300;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--gold);
+    transition: transform 280ms var(--ease-luxe);
+  }
+  .faq-item[open] summary::after { transform: rotate(45deg); }
+  .faq-item p { margin: -4px 2px 20px !important; }
+
+  /* ============================================================
+     Hero — unchanged from the confirmed TOP page
+  ============================================================ */
+  .site-hero {
+    position: relative;
+    height: 100vh;
+    min-height: 620px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .hero-photo {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 74% 28%, rgba(255, 214, 150, 0.5) 0%, rgba(217, 168, 87, 0.22) 20%, transparent 42%),
+      linear-gradient(180deg, #4a3c28 0%, #2c2420 35%, #171310 72%, #0f0d0a 100%);
+    animation: ambientDrift 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes ambientDrift {
+    0% { transform: scale(1) translateY(0); }
+    100% { transform: scale(1.06) translateY(-1.5%); }
+  }
+
+  /* ------------------------------------------------------------
+     Hero background video (2026-09-08 追加)
+     Style Guide 04章の「ヒーロー動画 / 短尺ループ動画」を実装したもの。
+     デザイン・文章・レイアウトには手を触れていない。既存の .hero-photo は
+     読み込み前とデコード不可時の下地としてそのまま残してある。
+     object-fit:cover なので拡大縮小しても縦横比は崩れない。
+  ------------------------------------------------------------ */
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* PCのChromeではHero(約1936x860)が動画(1920x1012)より横長になるため、
+       cover は上下を約152px切り落とす。どの帯を残すかがこの値の意味。
+
+       実測した被写体の位置（動画1012px中）:
+         カプリの女性 … 帽子の上端 537px / 体の下端 1011px（画面下端まで写っている）
+         京都の塔     … 先端 223px
+         浜辺の跳躍   … 中央付近
+
+       画面に見えるのは1021px中851pxだけで、常に170pxが隠れる。
+       跳躍する女性の髪の先端は32px（6.3秒の最高到達点）まで達する一方、
+       カプリの女性は下端1011pxまで写っている。両方を収めるには979px必要だが
+       見えるのは851pxしかなく、ひとつの値では同時に収まらない。
+       そこでカットの切り替わりに合わせて値を変える（下の script を参照）。
+       ここでの既定値は、万一スクリプトが動かなくても跳躍シーンの全身が
+       残るように 19%（＝上の切り落とし32px）にしてある。 */
+    object-position: center 19%;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 900ms var(--ease-luxe);
+    pointer-events: none;
+  }
+
+  .hero-video.is-ready { opacity: 1; }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(15, 13, 10, 0.72) 0%, rgba(15, 13, 10, 0.28) 46%, rgba(15, 13, 10, 0.1) 72%);
+  }
+
+  .hero-copy { position: relative; z-index: 2; max-width: 480px; padding: 0 var(--sp-6); }
+
+  .hero-eyebrow {
+    font-family: var(--sans-en);
+    font-weight: 500;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 var(--sp-3);
+  }
+
+  .hero-title {
+    font-family: var(--serif-en);
+    font-weight: 500;
+    font-size: clamp(2.75rem, 8vw, 6rem);
+    line-height: 1.05;
+    margin: 0 0 var(--sp-3);
+    color: var(--ivory);
+  }
+
+  .hero-tagline {
+    font-family: var(--sans-jp);
+    font-weight: 300;
+    font-size: 0.95rem;
+    line-height: 1.9;
+    color: var(--ivory-muted);
+    margin: 0 0 var(--sp-4);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: var(--sans-en);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 14px 32px;
+  }
+
+  .btn svg { width: 14px; height: 14px; }
+
+  /* ============================================================
+     Intro
+  ============================================================ */
+  .site-intro { text-align: center; padding: var(--sp-9) var(--sp-4); }
+
+  .intro-headline {
+    font-family: var(--serif-en);
+    font-weight: 400;
+    font-size: clamp(1.7rem, 3.6vw, 2.5rem);
+    margin: var(--sp-2) 0 0;
+  }
+
+  .intro-rule { width: 40px; height: 1px; background: var(--gold); margin: var(--sp-3) auto 0; }
+
+  /* ============================================================
+     Category grid
+  ============================================================ */
+  .site-grid { padding: 0 var(--sp-6) var(--sp-9); }
+
+  /* 2026-09-18: JOURNAL を足して6枚になったため、PCは 5列1段 → 3列2段 に変更。
+     6列1段だと1枚あたり約278pxまで細くなる。3列のまま画面いっぱいに広げると
+     1枚が約580x725pxと大きくなりすぎるので、最大幅で抑えて中央に置く。
+     カードの縦横比（4:5）と各写真の切り抜き位置は変えていない。 */
+  .site-grid-inner {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--sp-3);
+    max-width: 1320px;
+    margin: 0 auto;
+  }
+
+  .card {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .card-photo { position: absolute; inset: 0; transition: transform 6000ms var(--ease-luxe); }
+  .card:hover .card-photo { transform: scale(1.04); }
+
+  /* ------------------------------------------------------------
+     カード写真（2026-09-09 追加）
+     5枚とも同じ土台。文字はHTML側（.card-copy）で重ねるので、
+     画像は背景ビジュアルとしてだけ使う。
+     .card が overflow:hidden なので、はみ出した分は切り取られる。
+  ------------------------------------------------------------ */
+  /* 冒頭の img{max-width:100%} が幅指定を打ち消してしまうので、ここだけ解除する。
+     カード内の画像はサイズを明示的に決めており、はみ出しは .card が切り取る。 */
+  .card-img { position: absolute; display: block; max-width: none; }
+
+  /* 既定。文字が入っていない写真はこれだけで4:5に収まる（引き伸ばしなし）。
+     MUSIC / SHOP / DIGITAL / CREATIVE もこのクラスを使う。 */
+  .card-img--fit {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* TRAVEL（2026-09-09 差し替え：夕景 → 朝のSantorini）
+     新しい画像は文字が入っていないので、他の4枚と同じ .card-img--fit を使う。
+     元画像は横長（比率1.094）なので 4:5 では左右あわせて26.9%が切り落とされる。
+     0%/25%/40%/50%/62%/100% を実際に描画して比較した結果 40% を採用：
+       ・朝日とその海面反射が左端で切れずに収まる（朝の景色＝今回の差し替えの目的）
+       ・中央のブルードームと鐘楼が欠けない
+       ・手前の朝食（クロワッサン／オレンジジュース／カプチーノ）が全部入る
+     62%以上では朝日が切れ、100%では朝日が完全に消えるため不採用。 */
+  .card-img--travel { object-position: 40% center; }
+
+  /* カードごとの見せ方（2026-09-09）
+     MUSIC / SHOP / CREATIVE は元画像がちょうど4:5なので切り落としが起きない。
+     指定は既定のままで、被写体はすべて収まる。
+     DIGITAL だけ元画像が正方形(1254x1254)で左右20%が切られるため、
+     女性（左端 x=110px = 8.8%）が欠けないよう左寄りにする。
+       35% → 左の切り落とし88px（女性まで22pxの余裕）／右163px */
+  .card-img--digital { object-position: 35% center; }
+
+  .photo-travel { background: linear-gradient(158deg, #e3b571 0%, #b6793f 26%, #3c3226 56%, #14120e 100%); }
+  .photo-shop { background: linear-gradient(135deg, #cbb896 0%, #8d7455 38%, #2c2620 74%, #14120e 100%); }
+  .photo-digital { background: linear-gradient(150deg, #4c4738 0%, #2a2721 34%, #182036 70%, #14120e 100%); }
+  .photo-creative { background: linear-gradient(146deg, #d9a857 0%, #6b6440 34%, #24352b 66%, #14120e 100%); }
+  /* JOURNAL（2026-09-18）。写真が決まるまでの下地。他の5枚の下地と同じ作りにしてある。 */
+  .photo-journal { background: linear-gradient(160deg, #d8c7a4 0%, #8a7556 34%, #2e2820 72%, #14120e 100%); }
+
+  /* JOURNAL カードだけは別サイト（公式note）へのリンク。カード全体を押せるようにし、
+     ナビの Journal と同じ小さな ↗ で外部であることを示す。 */
+  a.card { display: block; color: inherit; }
+  .card-ext .card-view::after {
+    content: "\2197";
+    display: inline-block;
+    margin-left: 0.4em;
+    transform: translateY(-0.06em);
+  }
+
+  /* MUSIC — restored to the original design (same visual language as
+     TRAVEL/SHOP/DIGITAL/CREATIVE). The pink×blue brand-visual test has
+     been removed. */
+  .photo-music {
+    background: radial-gradient(circle at 28% 20%, #7c5a35 0%, #3a2a1c 46%, #14120e 100%);
+  }
+
+  .card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(15, 13, 10, 0.88) 0%, rgba(15, 13, 10, 0.4) 42%, transparent 62%);
+  }
+
+  .card-copy { position: absolute; left: 0; right: 0; bottom: 0; padding: var(--sp-3); }
+
+  .card-number { display: block; font-family: var(--serif-en); font-size: 1.5rem; color: var(--gold); }
+  .card-title { display: block; margin-top: 2px; font-family: var(--serif-en); font-weight: 500; font-size: 1.35rem; color: var(--ivory); }
+  .card-sub { display: block; margin-top: 4px; font-family: var(--sans-jp); font-size: 0.75rem; color: var(--ivory-muted); }
+  .card-view {
+    position: relative;
+    display: inline-block;
+    margin-top: var(--sp-2);
+    font-family: var(--sans-en);
+    font-weight: 500;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* ============================================================
+     About / Story
+  ============================================================ */
+  .site-about {
+    display: grid;
+    grid-template-columns: 42% 1fr;
+    gap: var(--sp-6);
+    padding: 0 var(--sp-6) var(--sp-9);
+    align-items: center;
+  }
+
+  .about-heading {
+    font-family: var(--serif-jp);
+    font-weight: 500;
+    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+    line-height: 1.5;
+    margin: var(--sp-2) 0 var(--sp-3);
+  }
+
+  .about-body {
+    font-family: var(--sans-jp);
+    font-weight: 300;
+    font-size: 0.9375rem;
+    line-height: 1.9;
+    color: var(--ivory-muted);
+    max-width: 46ch;
+    margin: 0 0 var(--sp-4);
+  }
+
+  .about-media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: radial-gradient(circle at 24% 74%, rgba(255, 214, 150, 0.32) 0%, transparent 46%),
+      linear-gradient(200deg, #3d3220 0%, #221c17 46%, #100e0b 100%);
+  }
+
+  .play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    background: rgba(15, 13, 10, 0.4);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ivory);
+  }
+
+  .play-btn svg { width: 16px; height: 16px; margin-left: 2px; }
+
+  /* ============================================================
+     Footer
+  ============================================================ */
+  .site-footer {
+    background: var(--bg-surface);
+    border-top: 1px solid var(--gold-dim);
+    padding: var(--sp-6) var(--sp-6) var(--sp-4);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: var(--sp-5);
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .footer-logo { font-family: var(--serif-en); color: var(--gold); font-size: 1rem; letter-spacing: 0.06em; margin: 0; }
+
+  .footer-col h4 {
+    font-family: var(--sans-en);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ivory-faint);
+    margin: 0 0 var(--sp-2);
+    font-weight: 500;
+  }
+
+  .footer-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .footer-col a { font-family: var(--sans-jp); font-size: 0.8125rem; color: var(--ivory-muted); }
+
+  .footer-bottom {
+    max-width: 1440px;
+    margin: var(--sp-5) auto 0;
+    padding-top: var(--sp-3);
+    border-top: 1px solid var(--gold-dim);
+    font-family: var(--sans-en);
+    font-size: 0.68rem;
+    color: var(--ivory-faint);
+  }
+
+
+  /* ============================================================
+     Responsive  (2026-09-09 追加)
+
+     これまでレスポンシブ指定が一切無く、375px幅では
+     5列グリッドが崩れずに残るせいでページ幅が689pxになり、
+     カードが 30x38px まで潰れていた。その修正。
+
+     1200px超（＝確認済みのPC表示 1936px を含む）には
+     一切の指定が効かないようにしてあるので、PCの見た目は不変。
+  ============================================================ */
+
+  /* --- 大きめのノートPC / 横向きタブレット --- */
+  @media (max-width: 1200px) {
+    .site-grid-inner { grid-template-columns: repeat(3, 1fr); }
+    .site-header { padding: 0 var(--sp-4); }
+    .site-nav { gap: var(--sp-3); }
+    .site-grid { padding: 0 var(--sp-4) var(--sp-7); }
+    .site-about { padding: 0 var(--sp-4) var(--sp-7); }
+    .site-footer { padding: var(--sp-5) var(--sp-4) var(--sp-4); }
+  }
+
+  /* --- ヘッダーのSNSアイコン4つが入りきらなくなる幅（2026-09-18）---
+     ナビ7項目と並べると、この幅以下ではロゴ・ナビとの間が詰まる（実測で決めた値）。
+     隠したアイコンはメニュー（ハンバーガー）とフッターから開ける。 */
+  @media (max-width: 1280px) {
+    .header-social { display: none; }
+  }
+
+  /* --- ヘッダーのナビが入りきらなくなる幅。ハンバーガーへ渡す ---
+     2026-09-18: Journal を足して7項目になったため 1080 → 1120px に上げた。
+     1080のままだと 1081px のフランス語でロゴとの間が22pxまで詰まった（実測）。 */
+  @media (max-width: 1120px) {
+    .site-nav { display: none; }
+    .hamburger { display: flex; }
+  }
+
+  /* --- タブレット縦 --- */
+  @media (max-width: 900px) {
+    .site-grid-inner { grid-template-columns: repeat(2, 1fr); }
+    .site-about { grid-template-columns: 1fr; gap: var(--sp-4); }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: var(--sp-4); }
+    .site-intro { padding: var(--sp-7) var(--sp-4); }
+  }
+
+  /* --- スマートフォン --- */
+  @media (max-width: 560px) {
+    .site-header { height: 64px; padding: 0 var(--sp-3); }
+    .site-logo { font-size: 1rem; letter-spacing: 0.06em; }
+    .header-actions { gap: var(--sp-2); }
+    .header-actions svg { width: 16px; height: 16px; }
+    .lang-toggle { height: 26px; padding: 0 6px; gap: 4px; }
+
+    .site-hero { height: auto; min-height: 88vh; padding: var(--sp-8) 0 var(--sp-7); }
+    .hero-copy { max-width: none; padding: 0 var(--sp-3); }
+    /* スマホでは文字が画面幅いっぱいに載るので、PCの「左だけ暗い」グラデーションでは
+       明るいカットのときに読みにくくなる。縦方向の均一な覆いに置き換える。
+       PC(561px以上)のグラデーションには触れていない。 */
+    .hero-overlay {
+      background: linear-gradient(180deg, rgba(15, 13, 10, 0.62) 0%, rgba(15, 13, 10, 0.5) 38%, rgba(15, 13, 10, 0.72) 78%, rgba(15, 13, 10, 0.9) 100%);
+    }
+    .hero-tagline { font-size: 0.9rem; line-height: 1.85; }
+    .btn { padding: 13px 26px; font-size: 0.75rem; }
+
+    .site-intro { padding: var(--sp-6) var(--sp-3); }
+    .site-grid { padding: 0 var(--sp-3) var(--sp-6); }
+
+    /* 1列。5枚を無理に並べず、写真を大きく見せる。 */
+    .site-grid-inner { grid-template-columns: 1fr; gap: var(--sp-2); }
+    .card-copy { padding: var(--sp-3) var(--sp-3) var(--sp-2); }
+    .card-number { font-size: 1.3rem; }
+    .card-title { font-size: 1.5rem; }
+    .card-sub { font-size: 0.8125rem; }
+    .card-view { font-size: 0.72rem; margin-top: 10px; }
+
+    .site-about { padding: 0 var(--sp-3) var(--sp-6); }
+    .about-body { font-size: 0.9rem; max-width: none; }
+
+    .site-footer { padding: var(--sp-5) var(--sp-3) var(--sp-3); }
+    .footer-grid { grid-template-columns: 1fr; gap: var(--sp-4); }
+    .footer-bottom { margin-top: var(--sp-4); font-size: 0.62rem; }
+  }
+
+  /* --- 指で押せる大きさを確保（マウスが無い端末） --- */
+  @media (hover: none) {
+    .lang-menu button { padding: 12px 14px; }
+    .card-view { padding: 4px 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-photo, .card-photo { animation: none !important; transition-duration: 1ms !important; }
+    /* 動きを抑える設定の人には背景動画も再生しない（下地のグラデーションを表示） */
+    .hero-video { display: none !important; }
+    .info-panel, .contact-topics a, .faq-item summary::after { transition-duration: 1ms !important; }
+  }
+
+  /* SUPPORT パネル：スマホ */
+  @media (max-width: 560px) {
+    .info-panel-inner { padding: var(--sp-7) var(--sp-3) var(--sp-6); }
+    .panel-close { top: 14px; right: 12px; }
+    .info-panel p, .info-panel li { font-size: 0.9rem; }
+  }
+</style>
+
+<header class="site-header" id="siteHeader">
+  <span class="site-logo">COLOR GARDEN</span>
+  <nav>
+    <ul class="site-nav">
+      <li><a href="travel.html" data-i18n="nav.travel">Travel</a></li>
+      <li><a href="#" data-i18n="nav.music">Music</a></li>
+      <li><a href="#" data-i18n="nav.shop">Shop</a></li>
+      <li><a href="#" data-i18n="nav.digital">Digital</a></li>
+      <li><a href="#" data-i18n="nav.creative">Creative</a></li>
+      <li><a href="https://note.com/color_garden" class="nav-ext" target="_blank" rel="noopener"><span data-i18n="nav.journal">Journal</span><span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a></li>
+      <li><a href="#" data-i18n="nav.about">About</a></li>
+    </ul>
+  </nav>
+  <div class="header-actions">
+    <!-- 言語切替（2026-09-09 追加）。PC・スマホ共通で、どの幅でも表示する。 -->
+    <div class="lang-switch" id="langSwitch">
+      <button class="lang-toggle" id="langToggle" aria-haspopup="listbox" aria-expanded="false"
+              aria-label="表示言語を選ぶ" data-i18n-aria="a11y.language">
+        <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18" /></svg>
+        <span id="langCurrent">JA</span>
+        <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6" /></svg>
+      </button>
+      <ul class="lang-menu" id="langMenu" role="listbox" aria-label="Language"></ul>
+    </div>
+    <!-- 公式SNS（2026-09-18）。Instagram・TikTok は既存のアイコンをそのまま使い、リンクにしただけ。
+         X・Threads は同じ線の太さ(1.4)・同じ大きさで追加。行き先は site.json の social.*。
+         幅が足りない画面ではここを隠し、メニューとフッターから開けるようにする（CSS の Responsive 節）。 -->
+    <div class="header-social">
+      <a class="social-link" href="https://www.instagram.com/color_garden__/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4" /><circle cx="12" cy="12" r="4" /></svg><span class="sr-only">Instagram</span><span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a>
+      <a class="social-link" href="https://www.tiktok.com/@color_t.a.888" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M14 4c0 2.2 1.8 4 4 4v2.5A6.5 6.5 0 0 1 14 9v6.5a5 5 0 1 1-5-5c.35 0 .68.03 1 .1V13a2.5 2.5 0 1 0 2 2.45V4h2z" /></svg><span class="sr-only">TikTok</span><span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a>
+      <a class="social-link" href="https://x.com/color_garden888" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4.5 4h4l11 16h-4z" /><path d="M19.5 4l-6.2 7.1M10.7 12.9L4.5 20" /></svg><span class="sr-only">X</span><span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a>
+      <a class="social-link" href="https://www.threads.com/@color_garden__" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M16.9 8.4C16 6.2 14.3 5 12 5c-3.9 0-6.5 2.8-6.5 7s2.6 7 6.5 7c3.2 0 5.5-1.7 5.5-4.4 0-2.5-1.9-3.7-4.6-3.7-2.3 0-3.7 1-3.7 2.5 0 1.3 1.1 2.1 2.6 2.1 2.4 0 3.5-1.9 3.5-5.2" /></svg><span class="sr-only">Threads</span><span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a>
+    </div>
+    <button class="hamburger" id="menuOpen" aria-label="メニュー" aria-expanded="false" data-i18n-aria="a11y.menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- モバイルメニュー（2026-09-09 追加）。1120px以下でヘッダーのナビの代わりになる。 -->
+<div class="mobile-menu" id="mobileMenu" hidden>
+  <button class="mobile-menu-close" id="menuClose" aria-label="メニューを閉じる" data-i18n-aria="a11y.close">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 6l12 12M18 6L6 18" /></svg>
+  </button>
+  <span class="site-logo">COLOR GARDEN</span>
+  <ul class="mobile-nav">
+    <li><a href="travel.html" data-i18n="nav.travel">Travel</a></li>
+    <li><a href="#" data-i18n="nav.music">Music</a></li>
+    <li><a href="#" data-i18n="nav.shop">Shop</a></li>
+    <li><a href="#" data-i18n="nav.digital">Digital</a></li>
+    <li><a href="#" data-i18n="nav.creative">Creative</a></li>
+    <li><a href="https://note.com/color_garden" class="nav-ext" target="_blank" rel="noopener"><span data-i18n="nav.journal">Journal</span><span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a></li>
+    <li><a href="#" data-i18n="nav.about">About</a></li>
+  </ul>
+  <!-- 公式SNS（2026-09-18）。ヘッダーにアイコンを出せない幅（スマホ等）でも開けるように、メニューにも置く。 -->
+  <div class="mobile-social">
+    <a class="social-link" href="https://www.instagram.com/color_garden__/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4" /><circle cx="12" cy="12" r="4" /></svg><span class="sr-only">Instagram</span><span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a>
+    <a class="social-link" href="https://www.tiktok.com/@color_t.a.888" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M14 4c0 2.2 1.8 4 4 4v2.5A6.5 6.5 0 0 1 14 9v6.5a5 5 0 1 1-5-5c.35 0 .68.03 1 .1V13a2.5 2.5 0 1 0 2 2.45V4h2z" /></svg><span class="sr-only">TikTok</span><span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a>
+    <a class="social-link" href="https://x.com/color_garden888" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4.5 4h4l11 16h-4z" /><path d="M19.5 4l-6.2 7.1M10.7 12.9L4.5 20" /></svg><span class="sr-only">X</span><span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a>
+    <a class="social-link" href="https://www.threads.com/@color_garden__" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M16.9 8.4C16 6.2 14.3 5 12 5c-3.9 0-6.5 2.8-6.5 7s2.6 7 6.5 7c3.2 0 5.5-1.7 5.5-4.4 0-2.5-1.9-3.7-4.6-3.7-2.3 0-3.7 1-3.7 2.5 0 1.3 1.1 2.1 2.6 2.1 2.4 0 3.5-1.9 3.5-5.2" /></svg><span class="sr-only">Threads</span><span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a>
+  </div>
+</div>
+
+
+<style>
+  /* ============================================================
+     Travel ページ（2026-09-23）
+     トップのデザイントークンをそのまま使う。新しい色も書体も足さない。
+     広告サイトに見えないよう、枠線で囲んだ広告ブロックやバナーは使わない。
+  ============================================================ */
+  .tv-hero {
+    position: relative;
+    height: min(72vh, 620px);
+    display: flex; align-items: flex-end;
+    overflow: hidden;
+  }
+  .tv-hero-photo { position: absolute; inset: 0; }
+  .tv-hero-photo img {
+    width: 100%; height: 100%; max-width: none;
+    object-fit: cover;
+    animation: tvZoom 24000ms var(--ease-luxe) forwards;
+  }
+  @keyframes tvZoom { from { transform: scale(1.06); } to { transform: scale(1); } }
+  .tv-hero::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(20,18,14,0.55) 0%, rgba(20,18,14,0.15) 42%, rgba(20,18,14,0.92) 100%);
+  }
+  .tv-hero-copy { position: relative; z-index: 1; padding: 0 var(--sp-6) var(--sp-7); }
+  .tv-eyebrow {
+    font-family: var(--sans-en); font-size: 0.68rem; letter-spacing: 0.34em;
+    text-transform: uppercase; color: var(--gold); margin: 0 0 var(--sp-2);
+  }
+  .tv-hero-title {
+    font-family: var(--serif-en); font-weight: 300;
+    font-size: clamp(2.6rem, 7vw, 5.2rem); line-height: 1.02;
+    letter-spacing: 0.02em; color: var(--ivory); margin: 0;
+  }
+  .tv-rule { width: 40px; height: 1px; background: var(--gold); margin: var(--sp-3) 0 0; }
+
+  .tv-intro { text-align: center; padding: var(--sp-8) var(--sp-4) var(--sp-7); }
+  .tv-intro p {
+    font-family: var(--serif-en); font-weight: 300;
+    font-size: clamp(1.15rem, 2.6vw, 1.7rem); line-height: 1.8;
+    color: var(--ivory); max-width: 720px; margin: 0 auto;
+  }
+  .tv-intro .tv-rule { margin: var(--sp-4) auto 0; }
+
+  /* --- 行き先（ハブ）--- */
+  .tv-dest { padding: 0 var(--sp-6) var(--sp-8); }
+  .tv-dest-head { max-width: 1320px; margin: 0 auto var(--sp-4); }
+  .tv-sec-title {
+    font-family: var(--serif-en); font-weight: 300;
+    font-size: clamp(1.5rem, 3vw, 2.1rem); color: var(--ivory); margin: var(--sp-1) 0 0;
+  }
+  .tv-dest-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: var(--sp-3); max-width: 1320px; margin: 0 auto;
+  }
+  .tv-card { position: relative; aspect-ratio: 4 / 5; border-radius: 2px; overflow: hidden; display: block; }
+  .tv-card img {
+    position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;
+    object-fit: cover; transition: transform 6000ms var(--ease-luxe);
+  }
+  .tv-card:hover img { transform: scale(1.04); }
+  .tv-card::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(20,18,14,0) 44%, rgba(20,18,14,0.86) 100%);
+  }
+  .tv-card-copy { position: absolute; left: var(--sp-3); right: var(--sp-3); bottom: var(--sp-3); z-index: 1; }
+  .tv-card-name {
+    font-family: var(--serif-en); font-weight: 400; font-size: 1.5rem;
+    color: var(--ivory); margin: 0; letter-spacing: 0.02em;
+  }
+  .tv-card-sub {
+    font-family: var(--sans-en); font-size: 0.7rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ivory-faint); margin: 6px 0 0;
+  }
+  .tv-card-soon {
+    font-family: var(--sans-en); font-size: 0.62rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--gold-light); margin: 10px 0 0; opacity: 0.85;
+  }
+
+  /* --- 旅の準備（広告を置く唯一の場所）--- */
+  .tv-prep { padding: var(--sp-8) var(--sp-6) var(--sp-9); border-top: 1px solid rgba(198,165,103,0.16); }
+  .tv-prep-inner { max-width: 880px; margin: 0 auto; }
+  .tv-prep-note {
+    font-family: var(--sans-en); font-size: 0.66rem; letter-spacing: 0.1em;
+    color: var(--ivory-faint); margin: var(--sp-2) 0 0;
+  }
+  .tv-prep-list { list-style: none; padding: 0; margin: var(--sp-6) 0 0; }
+  .tv-prep-item { padding: var(--sp-4) 0; border-bottom: 1px solid rgba(198,165,103,0.12); }
+  .tv-prep-item:last-child { border-bottom: none; }
+  .tv-prep-title {
+    font-family: var(--serif-en); font-weight: 400; font-size: 1.28rem;
+    color: var(--ivory); margin: 0;
+  }
+  .tv-prep-body {
+    font-family: var(--sans-jp); font-size: 0.9rem; line-height: 1.95;
+    color: var(--ivory-muted); margin: 10px 0 0;
+  }
+  .tv-prep-cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--sans-en); font-size: 0.75rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--gold); margin-top: var(--sp-2);
+    border-bottom: 1px solid var(--gold-dim); padding-bottom: 3px;
+    transition: border-color 600ms var(--ease-luxe);
+  }
+  .tv-prep-cta:hover { border-bottom-color: var(--gold); }
+  .tv-prep-cta svg { width: 13px; height: 13px; }
+  .tv-prep-pending {
+    font-family: var(--sans-en); font-size: 0.68rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ivory-faint); margin-top: var(--sp-2); display: inline-block;
+  }
+
+  /* --- Journal への導線 --- */
+  .tv-journal { text-align: center; padding: 0 var(--sp-4) var(--sp-9); }
+
+  @media (max-width: 1120px) {
+    .tv-dest-grid { grid-template-columns: repeat(2, 1fr); }
+    .tv-hero-copy { padding: 0 var(--sp-4) var(--sp-6); }
+    .tv-dest, .tv-prep { padding-left: var(--sp-4); padding-right: var(--sp-4); }
+  }
+  @media (max-width: 560px) {
+    .tv-hero { height: min(66vh, 480px); }
+    .tv-dest-grid { grid-template-columns: 1fr; }
+    .tv-prep-title { font-size: 1.15rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tv-hero-photo img { animation: none !important; }
+    .tv-card img { transition-duration: 1ms !important; }
+  }
+</style>
+
+<style>
+  /* ============================================================
+     行き先ページ（2026-09-24）
+     主役は完成動画そのもの。まわりは暗い余白だけにして、
+     9:16 の縦型が一番大きく見える置き方にする。
+  ============================================================ */
+  .tv-film { padding: var(--sp-7) var(--sp-6) var(--sp-9); }
+  .tv-film-head { text-align: center; max-width: 880px; margin: 0 auto var(--sp-5); }
+  .tv-film-title {
+    font-family: var(--serif-en); font-weight: 300;
+    font-size: clamp(2.3rem, 6vw, 4.2rem); line-height: 1.04;
+    letter-spacing: 0.02em; color: var(--ivory); margin: 0;
+  }
+  .tv-film-sub {
+    font-family: var(--sans-en); font-size: 0.74rem; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--ivory-muted); margin: var(--sp-2) 0 0;
+  }
+  .tv-film-head .tv-rule { margin: var(--sp-3) auto 0; }
+
+  .tv-film-stage { display: flex; justify-content: center; }
+  .tv-film-video {
+    display: block; height: min(76vh, 880px); width: auto; aspect-ratio: 9 / 16;
+    max-width: 100%; background: #000; border-radius: 2px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  }
+  .tv-film-meta {
+    text-align: center; font-family: var(--sans-en); font-size: 0.66rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ivory-muted); margin: var(--sp-4) 0 0;
+  }
+  .tv-film-back { text-align: center; margin-top: var(--sp-5); }
+
+  @media (max-width: 720px) {
+    .tv-film { padding: var(--sp-6) var(--sp-4) var(--sp-8); }
+    .tv-film-video { width: 100%; height: auto; }
+  }
+</style>
+
+<section class="tv-film">
+  <div class="tv-film-head">
+    <p class="tv-eyebrow" data-i18n="travel.hero.eyebrow">Color Garden — Travel</p>
+    <h1 class="tv-film-title">Croatia</h1>
+    <p class="tv-film-sub">Dubrovnik / Vis / Hvar</p>
+    <div class="tv-rule"></div>
+  </div>
+  <div class="tv-film-stage">
+    <video class="tv-film-video" controls playsinline preload="metadata" poster="video/Croatia_Cover_A_v1.png" width="1080" height="1920">
+      <source src="video/Croatia_Final_v1.mp4" type="video/mp4" />
+    </video>
+  </div>
+  <p class="tv-film-meta">0:30 &middot; 1080&times;1920 &middot; <span data-i18n="travel.film.sound">Sound on</span></p>
+  <p class="tv-film-back"><a class="tv-prep-cta" href="travel.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg> <span data-i18n="travel.film.back">Back to destinations</span></a></p>
+</section>
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-col"><p class="footer-logo">COLOR GARDEN</p></div>
+    <div class="footer-col">
+      <h4 data-i18n="footer.nav">Navigation</h4>
+      <ul><li><a href="travel.html" data-i18n="nav.travel">Travel</a></li><li><a href="#" data-i18n="nav.music">Music</a></li><li><a href="#" data-i18n="nav.shop">Shop</a></li><li><a href="#" data-i18n="nav.digital">Digital</a></li><li><a href="#" data-i18n="nav.creative">Creative</a></li><li><a href="https://note.com/color_garden" class="nav-ext" target="_blank" rel="noopener"><span data-i18n="nav.journal">Journal</span><span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a></li><li><a href="#" data-i18n="nav.about">About</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="footer.support">Support</h4>
+      <ul><li><a href="#contact" data-i18n="footer.contact">Contact</a></li><li><a href="#faq" data-i18n="footer.faq">FAQ</a></li><li><a href="#privacy" data-i18n="footer.privacy">Privacy Policy</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="footer.follow">Follow Us</h4>
+      <ul><li><a href="https://www.instagram.com/color_garden__/" class="nav-ext" target="_blank" rel="noopener">Instagram<span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a></li><li><a href="https://www.tiktok.com/@color_t.a.888" class="nav-ext" target="_blank" rel="noopener">TikTok<span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a></li><li><a href="https://x.com/color_garden888" class="nav-ext" target="_blank" rel="noopener">X<span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a></li><li><a href="https://www.threads.com/@color_garden__" class="nav-ext" target="_blank" rel="noopener">Threads<span class="sr-only" data-i18n="a11y.newtab">（新しいタブで開きます）</span></a></li><li><a href="#">YouTube</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom" data-i18n="footer.copyright">© 2026 COLOR GARDEN. ALL RIGHTS RESERVED.</div>
+</footer>
+
+<!-- ================================================================
+     SUPPORT パネル（2026-09-19）。フッターの Contact / FAQ / Privacy Policy から開く。
+     内容は確認済みの事実だけ。文章は i18n.json、宛先と用件は site.json の contact。
+================================================================ -->
+<div class="info-panel" id="panel-contact" role="dialog" aria-modal="true" aria-labelledby="panel-contact-title" hidden>
+  <button class="panel-close" data-close-panel aria-label="閉じる" data-i18n-aria="a11y.closePanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button>
+  <div class="info-panel-inner">
+    <p class="hero-eyebrow" data-i18n="footer.support">Support</p>
+    <h2 class="panel-title" id="panel-contact-title" data-i18n="contact.title">お問い合わせ</h2>
+    <p data-i18n="contact.lead">COLOR GARDENへのご連絡は、メールで承っています。</p>
+    <span class="panel-label" data-i18n="contact.topicsLabel">ご用件</span>
+    <ul class="contact-topics" id="contactTopics">
+<li><a href="mailto:colorgarden.official@gmail.com?subject=%5BCOLOR%20GARDEN%5D%20Hotel%20%26%20Hospitality" data-i18n="contact.topic.hotel">ホテル・宿泊施設のご相談</a></li><li><a href="mailto:colorgarden.official@gmail.com?subject=%5BCOLOR%20GARDEN%5D%20Brand%20Partnership" data-i18n="contact.topic.brand">ブランドタイアップ・広告のご相談</a></li><li><a href="mailto:colorgarden.official@gmail.com?subject=%5BCOLOR%20GARDEN%5D%20Collaboration" data-i18n="contact.topic.collab">コラボレーション・制作のご相談</a></li><li><a href="mailto:colorgarden.official@gmail.com?subject=%5BCOLOR%20GARDEN%5D%20Products" data-i18n="contact.topic.product">商品についてのお問い合わせ</a></li><li><a href="mailto:colorgarden.official@gmail.com?subject=%5BCOLOR%20GARDEN%5D%20General%20Inquiry" data-i18n="contact.topic.general">その他のお問い合わせ</a></li>
+    </ul>
+    <p class="panel-note contact-fallback" id="contactFallback" data-i18n="contact.fallback">メールアプリが開かない場合は、各ご用件の右にある「Gmail」から作成するか、下のアドレスをコピーしてお使いのメールからお送りください。</p>
+    <span class="panel-label" data-i18n="contact.emailLabel">メールアドレス</span>
+    <p class="contact-email-row"><a class="panel-email" href="mailto:colorgarden.official@gmail.com">colorgarden.official@gmail.com</a> <button type="button" class="contact-copy" id="contactCopy" data-copy="colorgarden.official@gmail.com" data-i18n="contact.copy">アドレスをコピー</button> <span class="contact-copied" id="contactCopied" role="status" aria-live="polite"></span></p>
+    <p class="panel-note"><span data-i18n="contact.note">お送りいただいた内容は、お問い合わせへの対応にのみ使用します。</span> <a class="panel-inline-link" href="#privacy" data-i18n="privacy.title">Privacy Policy</a></p>
+  </div>
+</div>
+
+<div class="info-panel" id="panel-faq" role="dialog" aria-modal="true" aria-labelledby="panel-faq-title" hidden>
+  <button class="panel-close" data-close-panel aria-label="閉じる" data-i18n-aria="a11y.closePanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button>
+  <div class="info-panel-inner">
+    <p class="hero-eyebrow" data-i18n="footer.support">Support</p>
+    <h2 class="panel-title" id="panel-faq-title" data-i18n="faq.title">よくあるご質問</h2>
+    <div class="faq-list">
+      <details class="faq-item"><summary data-i18n="faq.q1"></summary><p data-i18n="faq.a1"></p></details>
+      <details class="faq-item"><summary data-i18n="faq.q2"></summary><p data-i18n="faq.a2"></p></details>
+      <details class="faq-item"><summary data-i18n="faq.q3"></summary><p data-i18n="faq.a3"></p></details>
+      <details class="faq-item"><summary data-i18n="faq.q4"></summary><p><span data-i18n="faq.a4"></span> <a class="panel-inline-link nav-ext" href="https://note.com/color_garden" target="_blank" rel="noopener"><span data-i18n="nav.journal">Journal</span><span class="sr-only" data-i18n="a11y.newtab"></span></a></p></details>
+      <details class="faq-item"><summary data-i18n="faq.q5"></summary><p><span data-i18n="faq.a5"></span> <a class="panel-inline-link nav-ext" href="https://note.com/color_garden" target="_blank" rel="noopener"><span data-i18n="nav.journal">Journal</span><span class="sr-only" data-i18n="a11y.newtab"></span></a></p></details>
+      <details class="faq-item"><summary data-i18n="faq.q6"></summary><p><span data-i18n="faq.a6"></span> <a class="panel-inline-link" href="#contact" data-i18n="footer.contact">Contact</a></p></details>
+      <details class="faq-item"><summary data-i18n="faq.q7"></summary><p data-i18n="faq.a7"></p></details>
+    </div>
+  </div>
+</div>
+
+<div class="info-panel" id="panel-privacy" role="dialog" aria-modal="true" aria-labelledby="panel-privacy-title" hidden>
+  <button class="panel-close" data-close-panel aria-label="閉じる" data-i18n-aria="a11y.closePanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button>
+  <div class="info-panel-inner">
+    <p class="hero-eyebrow" data-i18n="footer.support">Support</p>
+    <h2 class="panel-title" id="panel-privacy-title" data-i18n="privacy.title">プライバシーポリシー</h2>
+    <p data-i18n="privacy.intro"></p>
+    <div class="panel-section"><h3 data-i18n="privacy.s1.h"></h3><p data-i18n="privacy.s1.p"></p></div>
+    <div class="panel-section"><h3 data-i18n="privacy.s2.h"></h3><p data-i18n="privacy.s2.p"></p></div>
+    <div class="panel-section"><h3 data-i18n="privacy.s3.h"></h3><p data-i18n="privacy.s3.p"></p></div>
+    <div class="panel-section"><h3 data-i18n="privacy.s4.h"></h3><p data-i18n="privacy.s4.p"></p>
+      <ul class="panel-list">
+        <li><span data-i18n="privacy.s4.github"></span> — <a class="nav-ext" href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener"><span data-i18n="privacy.title">Privacy Policy</span><span class="sr-only" data-i18n="a11y.newtab"></span></a></li>
+        <li><span data-i18n="privacy.s4.google"></span> — <a class="nav-ext" href="https://policies.google.com/privacy" target="_blank" rel="noopener"><span data-i18n="privacy.title">Privacy Policy</span><span class="sr-only" data-i18n="a11y.newtab"></span></a></li>
+      </ul>
+    </div>
+    <div class="panel-section"><h3 data-i18n="privacy.s5.h"></h3><p data-i18n="privacy.s5.p"></p></div>
+    <div class="panel-section"><h3 data-i18n="privacy.s6.h"></h3><p data-i18n="privacy.s6.p"></p></div>
+    <div class="panel-section"><h3 data-i18n="privacy.s7.h"></h3><p data-i18n="privacy.s7.p"></p></div>
+    <div class="panel-section"><h3 data-i18n="privacy.s8.h"></h3><p>COLOR GARDEN<br /><a class="panel-email" href="mailto:colorgarden.official@gmail.com">colorgarden.official@gmail.com</a></p></div>
+    <p class="panel-date" data-i18n="privacy.date"></p>
+  </div>
+</div>
+
+<script>
+  /* 問い合わせ窓口（2026-09-19 改）。用件のリンクはビルド時に HTML へ直接書く（JSなしでも押せる）。
+     ここは補助だけ：①アドレスのコピー ②mailto を押してもメールアプリが起動しなかったとき、代わりの手段を目立たせる。
+     mailto が動くかは閲覧者のOS・ブラウザの設定次第でサイトからは制御できないため、「Gmail」とコピーを常に並べておく。 */
+  (function () {
+    var fb = document.getElementById("contactFallback");
+    var list = document.getElementById("contactTopics");
+    if (list && fb) {
+      list.addEventListener("click", function (e) {
+        var a = e.target.closest && e.target.closest("a.contact-mail");
+        if (!a) return;
+        var left = false;
+        function mark() { left = true; }
+        window.addEventListener("blur", mark);
+        document.addEventListener("visibilitychange", mark);
+        setTimeout(function () {
+          window.removeEventListener("blur", mark);
+          document.removeEventListener("visibilitychange", mark);
+          if (!left && document.visibilityState === "visible") fb.classList.add("is-alert");
+        }, 1500);
+      });
+    }
+    var btn = document.getElementById("contactCopy");
+    var out = document.getElementById("contactCopied");
+    if (btn) {
+      btn.addEventListener("click", function () {
+        var text = btn.getAttribute("data-copy");
+        function done() {
+          var lang = (document.documentElement.getAttribute("lang") || "ja").slice(0, 2).toLowerCase();
+          var dict = (typeof CG_I18N !== "undefined" && (CG_I18N[lang] || CG_I18N.ja)) || {};
+          var d = dict["contact.copied"] || "Copied";
+          if (out) { out.textContent = d; setTimeout(function () { out.textContent = ""; }, 2500); }
+        }
+        function legacy() {
+          var t = document.createElement("textarea");
+          t.value = text; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0";
+          document.body.appendChild(t); t.select();
+          try { document.execCommand("copy"); done(); } catch (err) { }
+          document.body.removeChild(t);
+        }
+        if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, legacy);
+        else legacy();
+      });
+    }
+  })();
+</script>
+
+<script>
+  /* ==================================================================
+     多言語（2026-09-09 追加）
+
+     方針: ページは1枚だけ。言語ごとにHTMLを複製しない。
+           訳文は src/i18n.json の1ファイルに集約し、ビルド時にここへ埋める。
+           文章を直すときは i18n.json だけを直せばよい。
+
+     対応: ja / en / fr / es / ko
+     優先順位: ①ユーザーが選んだ言語（localStorage）
+               ②ブラウザの言語設定（navigator.languages）
+               ③日本語
+           ①は②より必ず強い。一度選んだら次回もその言語で開く。
+
+     ブランド名 COLOR GARDEN は翻訳対象に入れていない（HTMLに直書きのまま）。
+  ================================================================== */
+  var CG_I18N = {"_readme":["COLOR GARDEN 公式ホームページの翻訳データ。文章を直すときはこのファイルだけを直す。","ページは1枚（index.html）で、言語ごとにページを作らない。","キーは HTML 側の data-i18n / data-i18n-html / data-i18n-aria と対応する。","ブランド名 COLOR GARDEN は全言語で翻訳しない。Instagram / TikTok / YouTube も固有名詞なので訳さない。","日本語(ja)は現行デザインの確定版そのまま。ナビとカード見出しが英字なのは日本語版の意匠であり、誤りではない。","編集後は node site/homepage/tools/build-homepage.js を実行すること。"],"_langs":[{"code":"ja","label":"JA","native":"日本語","htmlLang":"ja"},{"code":"en","label":"EN","native":"English","htmlLang":"en"},{"code":"fr","label":"FR","native":"Français","htmlLang":"fr"},{"code":"es","label":"ES","native":"Español","htmlLang":"es"},{"code":"ko","label":"KO","native":"한국어","htmlLang":"ko"}],"ja":{"meta.title":"COLOR GARDEN","nav.travel":"Travel","nav.music":"Music","nav.shop":"Shop","nav.digital":"Digital","nav.creative":"Creative","nav.journal":"Journal","nav.about":"About","hero.eyebrow":"Luxury Travel · Original Sound · Creative Life","hero.tagline":"美しい景色を歩き、心を動かす音に耳を澄まし、<br />日々の暮らしに彩りを添える。","hero.cta":"EXPLORE","intro.eyebrow":"Explore Our World","intro.headline":"Discover. Feel. Be inspired.","card.travel.title":"TRAVEL","card.travel.sub":"美しい景色と旅の記録","card.music.title":"MUSIC","card.music.sub":"オリジナル楽曲","card.shop.title":"SHOP","card.shop.sub":"アパレル・グッズ","card.digital.title":"DIGITAL","card.digital.sub":"ノウハウ・デジタル商品","card.creative.title":"CREATIVE","card.creative.sub":"映像制作・クリエイティブ活動","card.journal.title":"JOURNAL","card.journal.sub":"エッセイ・制作の舞台裏","card.view":"VIEW MORE","about.eyebrow":"About Color Garden","about.heading":"彩りある人生を、あなたに。","about.body":"COLOR GARDENは、旅・音楽・ものづくりを通じて、日常に小さな感動をもたらすライフスタイルブランドです。美しい景色に心を動かされる瞬間、耳に残る一節の旋律、丁寧に作られたプロダクト——そのひとつひとつが、あなたの毎日に新しい彩りを加えていきます。","about.cta":"OUR STORY","footer.nav":"Navigation","footer.support":"Support","footer.follow":"Follow Us","footer.contact":"Contact","footer.faq":"FAQ","footer.privacy":"Privacy Policy","footer.copyright":"© 2026 COLOR GARDEN. ALL RIGHTS RESERVED.","a11y.closePanel":"閉じる","contact.title":"お問い合わせ","contact.lead":"COLOR GARDENへのご連絡は、メールで承っています。ご用件を選ぶと、件名が入った状態でメールアプリが開きます。","contact.topicsLabel":"ご用件","contact.topic.hotel":"ホテル・宿泊施設のご相談","contact.topic.brand":"ブランドタイアップ・広告のご相談","contact.topic.collab":"コラボレーション・制作のご相談","contact.topic.product":"商品についてのお問い合わせ","contact.topic.general":"その他のお問い合わせ","contact.emailLabel":"メールアドレス","contact.note":"お送りいただいた内容は、お問い合わせへの対応にのみ使用します。","contact.gmail":"Gmailで作成","contact.fallback":"メールアプリが開かない場合は、各ご用件の右にある「Gmail」から作成するか、下のアドレスをコピーしてお使いのメールからお送りください。","contact.copy":"アドレスをコピー","contact.copied":"コピーしました","faq.title":"よくあるご質問","faq.q1":"COLOR GARDENとは何ですか？","faq.a1":"旅・音楽・ものづくりを通じて、日常に小さな感動をもたらすライフスタイルブランドです。","faq.q2":"旅の映像はどこで見られますか？","faq.a2":"TikTokとInstagramで公開しています。ページ下部のリンクからご覧いただけます。","faq.q3":"音楽について教えてください。","faq.a3":"オリジナルのR&B楽曲を制作しています。","faq.q4":"デジタル商品はありますか？","faq.a4":"制作のノウハウをまとめた記事を、Journal（公式note）で公開しています。一部は有料記事です。","faq.q5":"Journalでは何を読めますか？","faq.a5":"AIを使った映像制作の工程や、制作の舞台裏を綴った記事です。","faq.q6":"お仕事のご相談はできますか？","faq.a6":"ホテル、ブランドタイアップ、コラボレーション、商品などのご相談は、Contactからメールでお送りください。","faq.q7":"表示言語を変えられますか？","faq.a7":"ページ上部の言語ボタンから選べます（日本語 · English · Français · Español · 한국어）。選んだ言語は、次回も同じ言語で表示されます。","privacy.title":"プライバシーポリシー","privacy.intro":"COLOR GARDEN（以下「当ブランド」）は、公式ウェブサイト（以下「本サイト」）における情報の取り扱いについて、次のとおり定めます。","privacy.s1.h":"本サイトで取得する情報","privacy.s1.p":"本サイトには、お問い合わせフォーム、会員登録、購入・決済の機能はありません。本サイトが、氏名やメールアドレスなどの個人情報を利用者から直接取得することはありません。","privacy.s2.h":"Cookie・アクセス解析・広告","privacy.s2.p":"本サイトはCookieを使用していません。アクセス解析ツールや広告配信サービスも使用していません。","privacy.s3.h":"ブラウザに保存する情報","privacy.s3.p":"表示言語を選んだ場合に限り、その設定をお使いのブラウザ（localStorage）に保存し、次回の表示に使います。この情報は端末の中だけに保存され、当ブランドや第三者に送信されることはありません。ブラウザのサイトデータを削除すると消去されます。","privacy.s4.h":"利用している外部サービス","privacy.s4.p":"本サイトは次の外部サービスを利用しています。本サイトを表示する際、利用者のブラウザからこれらのサービスへ接続が行われ、IPアドレスなどの技術的な情報が各社に送信されます。","privacy.s4.github":"GitHub Pages（GitHub, Inc.）— 本サイトの配信","privacy.s4.google":"Google Fonts（Google LLC）— 文字の表示","privacy.s5.h":"外部サイトへのリンク","privacy.s5.p":"本サイトには、Journal（公式note）、Instagram、TikTok、X、Threadsへのリンクがあります。本サイトは、これらのサービスの投稿やプログラムを埋め込んでいません。リンク先での情報の取り扱いは、各サービスのプライバシーポリシーに従います。","privacy.s6.h":"お問い合わせでいただいた情報","privacy.s6.p":"メールでお問い合わせいただいた場合、メールアドレスやお送りいただいた内容は、お問い合わせへの対応にのみ使用し、法令に基づく場合を除き、ご本人の同意なく第三者に提供しません。お問い合わせのメールは、Google LLCのGmailで受信しています。","privacy.s7.h":"本ポリシーの変更","privacy.s7.p":"本サイトの機能を追加・変更した場合は、本ポリシーを改定し、このページに掲載します。","privacy.s8.h":"お問い合わせ窓口","privacy.date":"制定日：2026年9月19日","a11y.menu":"メニュー","a11y.language":"表示言語を選ぶ","a11y.newtab":"（新しいタブで開きます）","a11y.close":"メニューを閉じる","travel.hero.eyebrow":"COLOR GARDEN — TRAVEL","travel.hero.title":"映像の、その場所へ。","travel.intro":"ひとつの行き先は、いつも1本の映像から始まります。ここは、その場所が実際にある世界の目録です。","travel.dest.eyebrow":"DESTINATIONS","travel.dest.title":"映像になった場所","travel.dest.soon":"準備中","travel.prep.eyebrow":"BEFORE YOU GO","travel.prep.title":"旅の準備","travel.prep.pr":"※この項目には広告（PR）を含みます。","travel.prep.pending":"リンク準備中","travel.prep.esim.title":"着いた瞬間から、つながる","travel.prep.esim.body":"空港でSIMを探す時間は、旅のいちばん良い時間ではありません。出発前にスマホの中だけで用意しておけば、着陸した直後から地図も配車も使えます。","travel.prep.esim.cta":"通信の準備を見る","travel.prep.flight.title":"その景色までの行き方","travel.prep.flight.body":"同じ行き先でも、経由地と時期で旅の形は変わります。まずは往復の相場を知るところから。","travel.prep.flight.cta":"航空券を調べる","travel.prep.package.title":"移動と滞在を、ひとつに","travel.prep.package.body":"航空券と宿を別々に押さえるより、組み合わせたほうが早く決まることがあります。日程が固まっている旅に向いています。","travel.prep.package.cta":"航空券とホテルをまとめて見る","travel.journal.cta":"JOURNAL を読む","travel.film.sound":"音声あり","travel.film.back":"行き先一覧へ戻る"},"en":{"meta.title":"COLOR GARDEN","nav.travel":"Travel","nav.music":"Music","nav.shop":"Shop","nav.digital":"Digital","nav.creative":"Creative","nav.journal":"Journal","nav.about":"About","hero.eyebrow":"Luxury Travel · Original Sound · Creative Life","hero.tagline":"Walk through landscapes that move you, listen for the melody that lingers,<br />and let color settle into every ordinary day.","hero.cta":"EXPLORE","intro.eyebrow":"Explore Our World","intro.headline":"Discover. Feel. Be inspired.","card.travel.title":"TRAVEL","card.travel.sub":"Landscapes worth the journey","card.music.title":"MUSIC","card.music.sub":"Original compositions","card.shop.title":"SHOP","card.shop.sub":"Apparel and objects","card.digital.title":"DIGITAL","card.digital.sub":"Knowledge, in digital form","card.creative.title":"CREATIVE","card.creative.sub":"Film and creative direction","card.journal.title":"JOURNAL","card.journal.sub":"Essays and notes from the studio","card.view":"VIEW MORE","about.eyebrow":"About COLOR GARDEN","about.heading":"A life lived in full color.","about.body":"COLOR GARDEN is a lifestyle house built around travel, music and craft — a search for the small moments that move us. A view that stops you mid-step, a phrase of melody that stays for days, an object made with real care: each one adds another shade to the life you are already living.","about.cta":"OUR STORY","footer.nav":"Navigation","footer.support":"Support","footer.follow":"Follow Us","footer.contact":"Contact","footer.faq":"FAQ","footer.privacy":"Privacy Policy","footer.copyright":"© 2026 COLOR GARDEN. ALL RIGHTS RESERVED.","a11y.closePanel":"Close","contact.title":"Contact","contact.lead":"We welcome enquiries by email. Choose a topic below and your mail app will open with the subject already filled in.","contact.topicsLabel":"Topics","contact.topic.hotel":"Hotels & hospitality","contact.topic.brand":"Brand partnerships & advertising","contact.topic.collab":"Collaborations & commissions","contact.topic.product":"Product enquiries","contact.topic.general":"General enquiries","contact.emailLabel":"Email","contact.note":"We use the information you send only to respond to your enquiry.","contact.gmail":"Write in Gmail","contact.fallback":"If your mail app does not open, use the “Gmail” button beside each topic, or copy the address below and write from any email service.","contact.copy":"Copy address","contact.copied":"Copied","faq.title":"Frequently asked questions","faq.q1":"What is COLOR GARDEN?","faq.a1":"A lifestyle brand that brings small moments of wonder into everyday life through travel, music and craft.","faq.q2":"Where can I watch your travel films?","faq.a2":"On TikTok and Instagram — you will find the links at the bottom of this page.","faq.q3":"Tell me about your music.","faq.a3":"We create original R&B music.","faq.q4":"Do you offer digital products?","faq.a4":"We publish articles sharing our production know-how in the Journal, our official note; some of them are paid.","faq.q5":"What can I read in the Journal?","faq.a5":"Articles on how we make our films with AI, and notes from behind the scenes.","faq.q6":"Can I contact you about working together?","faq.a6":"For hotels, brand partnerships, collaborations or products, please email us via Contact.","faq.q7":"Can I change the language?","faq.a7":"Yes — use the language button at the top of the page (日本語 · English · Français · Español · 한국어). Your choice is remembered for your next visit.","privacy.title":"Privacy Policy","privacy.intro":"COLOR GARDEN (\"we\") sets out below how information is handled on its official website (the \"Site\").","privacy.s1.h":"Information we collect","privacy.s1.p":"The Site has no contact form, no user accounts and no purchasing or payment features. The Site does not collect personal information such as your name or email address directly from you.","privacy.s2.h":"Cookies, analytics and advertising","privacy.s2.p":"The Site does not use cookies. It does not use any analytics tools or advertising services.","privacy.s3.h":"Information stored in your browser","privacy.s3.p":"Only if you choose a display language, that setting is saved in your browser (localStorage) and used on your next visit. It stays on your device and is never sent to us or to any third party. It is removed when you clear the site data in your browser.","privacy.s4.h":"External services we use","privacy.s4.p":"The Site uses the following external services. When you view the Site, your browser connects to them, and technical information such as your IP address is sent to each provider.","privacy.s4.github":"GitHub Pages (GitHub, Inc.) — hosting of the Site","privacy.s4.google":"Google Fonts (Google LLC) — display of typefaces","privacy.s5.h":"Links to other websites","privacy.s5.p":"The Site links to the Journal (our official note), Instagram, TikTok, X and Threads. The Site does not embed posts or code from these services. Once you follow a link, the privacy policy of that service applies.","privacy.s6.h":"Information you send us","privacy.s6.p":"If you contact us by email, we use your email address and the content of your message only to respond to your enquiry, and we do not share them with third parties without your consent unless required by law. Enquiry emails are received through Gmail, provided by Google LLC.","privacy.s7.h":"Changes to this policy","privacy.s7.p":"If we add or change features of the Site, we will revise this policy and publish the update on this page.","privacy.s8.h":"Contact","privacy.date":"Effective: 19 September 2026","a11y.menu":"Menu","a11y.language":"Choose a language","a11y.newtab":"(opens in a new tab)","a11y.close":"Close menu","travel.hero.eyebrow":"COLOR GARDEN — TRAVEL","travel.hero.title":"Where the film was made","travel.intro":"Every destination begins as a film. This is the index of those places, as they exist in the world.","travel.dest.eyebrow":"DESTINATIONS","travel.dest.title":"The places in our films","travel.dest.soon":"Coming soon","travel.prep.eyebrow":"BEFORE YOU GO","travel.prep.title":"Preparing the journey","travel.prep.pr":"This section contains advertising (PR).","travel.prep.pending":"Link coming soon","travel.prep.esim.title":"Connected the moment you land","travel.prep.esim.body":"Hunting for a SIM card at the airport is not the best part of a trip. Set it up on your phone before you leave, and maps and rides work the minute you land.","travel.prep.esim.cta":"See connectivity options","travel.prep.flight.title":"How to reach the view","travel.prep.flight.body":"The same destination changes shape with the route and the season. Start by knowing what a return fare looks like.","travel.prep.flight.cta":"Search flights","travel.prep.package.title":"Travel and stay, as one","travel.prep.package.body":"Booking the flight and the room together can settle a trip faster than doing each on its own. Best when the dates are already fixed.","travel.prep.package.cta":"See flight + hotel","travel.journal.cta":"Read the journal","travel.film.sound":"Sound on","travel.film.back":"Back to destinations"},"fr":{"meta.title":"COLOR GARDEN","nav.travel":"Voyage","nav.music":"Musique","nav.shop":"Boutique","nav.digital":"Digital","nav.creative":"Création","nav.journal":"Journal","nav.about":"À propos","hero.eyebrow":"Voyage d'exception · Son original · Vie créative","hero.tagline":"Parcourir des paysages qui émeuvent, écouter la mélodie qui demeure,<br />et laisser la couleur entrer dans chaque jour.","hero.cta":"EXPLORER","intro.eyebrow":"Explorez notre univers","intro.headline":"Découvrir. Ressentir. S'inspirer.","card.travel.title":"VOYAGE","card.travel.sub":"Paysages et carnets de route","card.music.title":"MUSIQUE","card.music.sub":"Compositions originales","card.shop.title":"BOUTIQUE","card.shop.sub":"Prêt-à-porter et objets","card.digital.title":"DIGITAL","card.digital.sub":"Savoir-faire et produits numériques","card.creative.title":"CRÉATION","card.creative.sub":"Films et direction créative","card.journal.title":"JOURNAL","card.journal.sub":"Essais et carnets d'atelier","card.view":"DÉCOUVRIR","about.eyebrow":"À propos de COLOR GARDEN","about.heading":"Une vie en couleurs.","about.body":"COLOR GARDEN est une maison de lifestyle née du voyage, de la musique et du geste artisanal — la recherche de ces instants qui nous émeuvent. Un paysage qui suspend le pas, une mélodie qui reste des jours durant, un objet façonné avec soin : chacun ajoute une nuance à la vie que vous menez déjà.","about.cta":"NOTRE HISTOIRE","footer.nav":"Navigation","footer.support":"Assistance","footer.follow":"Nous suivre","footer.contact":"Contact","footer.faq":"FAQ","footer.privacy":"Politique de confidentialité","footer.copyright":"© 2026 COLOR GARDEN. TOUS DROITS RÉSERVÉS.","a11y.closePanel":"Fermer","contact.title":"Nous contacter","contact.lead":"Nous répondons à vos demandes par e-mail. Choisissez un sujet ci-dessous : votre messagerie s’ouvrira avec l’objet déjà renseigné.","contact.topicsLabel":"Sujets","contact.topic.hotel":"Hôtellerie","contact.topic.brand":"Partenariats de marque et publicité","contact.topic.collab":"Collaborations et projets","contact.topic.product":"Questions sur nos produits","contact.topic.general":"Autres demandes","contact.emailLabel":"E-mail","contact.note":"Les informations que vous nous transmettez servent uniquement à répondre à votre demande.","contact.gmail":"Écrire avec Gmail","contact.fallback":"Si votre messagerie ne s’ouvre pas, utilisez le bouton « Gmail » à côté de chaque sujet, ou copiez l’adresse ci-dessous pour nous écrire depuis votre messagerie.","contact.copy":"Copier l’adresse","contact.copied":"Adresse copiée","faq.title":"Questions fréquentes","faq.q1":"Qu’est-ce que COLOR GARDEN ?","faq.a1":"Une marque de lifestyle qui, à travers le voyage, la musique et la création, apporte de petites émotions au quotidien.","faq.q2":"Où voir vos films de voyage ?","faq.a2":"Sur TikTok et Instagram ; les liens se trouvent en bas de cette page.","faq.q3":"Parlez-nous de votre musique.","faq.a3":"Nous créons de la musique R&B originale.","faq.q4":"Proposez-vous des produits numériques ?","faq.a4":"Nous publions des articles de savoir-faire dans le Journal, notre note officiel ; certains sont payants.","faq.q5":"Que trouve-t-on dans le Journal ?","faq.a5":"Des articles sur notre façon de créer nos films avec l’IA et sur les coulisses de la création.","faq.q6":"Peut-on vous proposer une collaboration ?","faq.a6":"Pour l’hôtellerie, les partenariats de marque, les collaborations ou nos produits, écrivez-nous depuis la page Contact.","faq.q7":"Puis-je changer de langue ?","faq.a7":"Oui, grâce au bouton de langue en haut de la page (日本語 · English · Français · Español · 한국어). Votre choix est conservé pour votre prochaine visite.","privacy.title":"Politique de confidentialité","privacy.intro":"COLOR GARDEN (« nous ») expose ci-dessous la manière dont les informations sont traitées sur son site officiel (le « Site »).","privacy.s1.h":"Informations collectées","privacy.s1.p":"Le Site ne comporte ni formulaire de contact, ni création de compte, ni fonction d’achat ou de paiement. Le Site ne collecte pas directement de données personnelles telles que votre nom ou votre adresse e-mail.","privacy.s2.h":"Cookies, mesure d’audience et publicité","privacy.s2.p":"Le Site n’utilise pas de cookies. Il n’utilise aucun outil de mesure d’audience ni aucun service publicitaire.","privacy.s3.h":"Informations enregistrées dans votre navigateur","privacy.s3.p":"Uniquement si vous choisissez une langue d’affichage, ce réglage est enregistré dans votre navigateur (localStorage) et utilisé lors de votre prochaine visite. Il reste sur votre appareil et n’est jamais transmis ni à nous, ni à des tiers. Il est supprimé lorsque vous effacez les données du site dans votre navigateur.","privacy.s4.h":"Services externes utilisés","privacy.s4.p":"Le Site utilise les services externes suivants. Lorsque vous consultez le Site, votre navigateur se connecte à ces services, et des informations techniques telles que votre adresse IP sont transmises à chaque prestataire.","privacy.s4.github":"GitHub Pages (GitHub, Inc.) — hébergement du Site","privacy.s4.google":"Google Fonts (Google LLC) — affichage des polices","privacy.s5.h":"Liens vers d’autres sites","privacy.s5.p":"Le Site contient des liens vers le Journal (notre note officiel), Instagram, TikTok, X et Threads. Le Site n’intègre aucune publication ni aucun code de ces services. Une fois le lien suivi, la politique de confidentialité du service concerné s’applique.","privacy.s6.h":"Informations que vous nous envoyez","privacy.s6.p":"Si vous nous contactez par e-mail, votre adresse et le contenu de votre message sont utilisés uniquement pour répondre à votre demande et ne sont pas communiqués à des tiers sans votre consentement, sauf obligation légale. Les e-mails de contact sont reçus via Gmail, service de Google LLC.","privacy.s7.h":"Modifications de la présente politique","privacy.s7.p":"Si nous ajoutons ou modifions des fonctionnalités du Site, nous réviserons la présente politique et publierons la mise à jour sur cette page.","privacy.s8.h":"Contact","privacy.date":"En vigueur : 19 septembre 2026","a11y.menu":"Menu","a11y.language":"Choisir une langue","a11y.newtab":"(s'ouvre dans un nouvel onglet)","a11y.close":"Fermer le menu","travel.hero.eyebrow":"COLOR GARDEN — TRAVEL","travel.hero.title":"Là où le film a été tourné","travel.intro":"Chaque destination commence par un film. Voici l'index de ces lieux, tels qu'ils existent dans le monde.","travel.dest.eyebrow":"DESTINATIONS","travel.dest.title":"Les lieux de nos films","travel.dest.soon":"Bientôt","travel.prep.eyebrow":"AVANT DE PARTIR","travel.prep.title":"Préparer le voyage","travel.prep.pr":"Cette rubrique contient de la publicité (PR).","travel.prep.pending":"Lien à venir","travel.prep.esim.title":"Connecté dès l'atterrissage","travel.prep.esim.body":"Chercher une carte SIM à l'aéroport n'est pas le meilleur moment du voyage. Préparez tout sur votre téléphone avant le départ : cartes et transports fonctionnent dès l'arrivée.","travel.prep.esim.cta":"Voir les options de connexion","travel.prep.flight.title":"Comment rejoindre le paysage","travel.prep.flight.body":"Une même destination change selon l'itinéraire et la saison. Commencez par connaître le prix d'un aller-retour.","travel.prep.flight.cta":"Rechercher un vol","travel.prep.package.title":"Le trajet et le séjour, ensemble","travel.prep.package.body":"Réserver le vol et la chambre ensemble peut décider un voyage plus vite que séparément. Idéal quand les dates sont déjà fixées.","travel.prep.package.cta":"Voir vol + hôtel","travel.journal.cta":"Lire le journal","travel.film.sound":"Avec son","travel.film.back":"Retour aux destinations"},"es":{"meta.title":"COLOR GARDEN","nav.travel":"Viajes","nav.music":"Música","nav.shop":"Tienda","nav.digital":"Digital","nav.creative":"Creativo","nav.journal":"Diario","nav.about":"Nosotros","hero.eyebrow":"Viajes de autor · Sonido original · Vida creativa","hero.tagline":"Recorrer paisajes que conmueven, escuchar la melodía que permanece<br />y dejar que el color habite cada día.","hero.cta":"EXPLORAR","intro.eyebrow":"Explora nuestro mundo","intro.headline":"Descubrir. Sentir. Inspirarse.","card.travel.title":"VIAJES","card.travel.sub":"Paisajes y cuadernos de viaje","card.music.title":"MÚSICA","card.music.sub":"Composiciones originales","card.shop.title":"TIENDA","card.shop.sub":"Prendas y objetos","card.digital.title":"DIGITAL","card.digital.sub":"Conocimiento y productos digitales","card.creative.title":"CREATIVO","card.creative.sub":"Cine y dirección creativa","card.journal.title":"DIARIO","card.journal.sub":"Ensayos y notas del estudio","card.view":"DESCUBRIR","about.eyebrow":"Sobre COLOR GARDEN","about.heading":"Una vida llena de color.","about.body":"COLOR GARDEN es una casa de lifestyle nacida del viaje, la música y el oficio: la búsqueda de esos instantes que nos conmueven. Un paisaje que detiene el paso, una melodía que permanece durante días, un objeto hecho con verdadero cuidado. Cada uno añade un matiz nuevo a la vida que ya habitas.","about.cta":"NUESTRA HISTORIA","footer.nav":"Navegación","footer.support":"Atención","footer.follow":"Síguenos","footer.contact":"Contacto","footer.faq":"Preguntas frecuentes","footer.privacy":"Política de privacidad","footer.copyright":"© 2026 COLOR GARDEN. TODOS LOS DERECHOS RESERVADOS.","a11y.closePanel":"Cerrar","contact.title":"Contacto","contact.lead":"Atendemos consultas por correo electrónico. Elige un tema y tu aplicación de correo se abrirá con el asunto ya indicado.","contact.topicsLabel":"Temas","contact.topic.hotel":"Hoteles y alojamiento","contact.topic.brand":"Colaboraciones de marca y publicidad","contact.topic.collab":"Colaboraciones y proyectos","contact.topic.product":"Consultas sobre productos","contact.topic.general":"Otras consultas","contact.emailLabel":"Correo electrónico","contact.note":"Usamos la información que nos envías únicamente para responder a tu consulta.","contact.gmail":"Escribir con Gmail","contact.fallback":"Si no se abre tu aplicación de correo, usa el botón «Gmail» junto a cada tema o copia la dirección de abajo y escríbenos desde tu correo.","contact.copy":"Copiar dirección","contact.copied":"Dirección copiada","faq.title":"Preguntas frecuentes","faq.q1":"¿Qué es COLOR GARDEN?","faq.a1":"Una marca de estilo de vida que, a través del viaje, la música y la creación, aporta pequeños momentos de emoción a la vida diaria.","faq.q2":"¿Dónde puedo ver vuestros vídeos de viaje?","faq.a2":"En TikTok e Instagram; encontrarás los enlaces al final de esta página.","faq.q3":"Háblanos de vuestra música.","faq.a3":"Creamos música R&B original.","faq.q4":"¿Ofrecéis productos digitales?","faq.a4":"Publicamos artículos con nuestro know-how de producción en el Diario, nuestro note oficial; algunos son de pago.","faq.q5":"¿Qué puedo leer en el Diario?","faq.a5":"Artículos sobre cómo creamos nuestros vídeos con IA y sobre lo que ocurre entre bastidores.","faq.q6":"¿Puedo proponeros una colaboración?","faq.a6":"Para hoteles, colaboraciones de marca, proyectos conjuntos o productos, escríbenos desde Contacto.","faq.q7":"¿Puedo cambiar el idioma?","faq.a7":"Sí, con el botón de idioma de la parte superior (日本語 · English · Français · Español · 한국어). Recordaremos tu elección para la próxima visita.","privacy.title":"Política de privacidad","privacy.intro":"COLOR GARDEN («nosotros») establece a continuación cómo se trata la información en su sitio web oficial (el «Sitio»).","privacy.s1.h":"Información que recogemos","privacy.s1.p":"El Sitio no tiene formulario de contacto, registro de usuarios ni funciones de compra o pago. El Sitio no recoge directamente datos personales como tu nombre o tu dirección de correo electrónico.","privacy.s2.h":"Cookies, analítica y publicidad","privacy.s2.p":"El Sitio no utiliza cookies. Tampoco utiliza herramientas de analítica ni servicios de publicidad.","privacy.s3.h":"Información guardada en tu navegador","privacy.s3.p":"Solo si eliges un idioma, esa preferencia se guarda en tu navegador (localStorage) y se usa en tu próxima visita. Permanece en tu dispositivo y nunca se envía a nosotros ni a terceros. Se elimina al borrar los datos del sitio en tu navegador.","privacy.s4.h":"Servicios externos que utilizamos","privacy.s4.p":"El Sitio utiliza los siguientes servicios externos. Al visitar el Sitio, tu navegador se conecta a ellos y se envía a cada proveedor información técnica como tu dirección IP.","privacy.s4.github":"GitHub Pages (GitHub, Inc.) — alojamiento del Sitio","privacy.s4.google":"Google Fonts (Google LLC) — visualización de tipografías","privacy.s5.h":"Enlaces a otros sitios","privacy.s5.p":"El Sitio enlaza con el Diario (nuestro note oficial), Instagram, TikTok, X y Threads. El Sitio no incrusta publicaciones ni código de estos servicios. Al seguir un enlace, se aplica la política de privacidad del servicio correspondiente.","privacy.s6.h":"Información que nos envías","privacy.s6.p":"Si nos escribes por correo electrónico, usamos tu dirección y el contenido de tu mensaje únicamente para responder a tu consulta y no los compartimos con terceros sin tu consentimiento, salvo obligación legal. Los correos de consulta se reciben a través de Gmail, servicio de Google LLC.","privacy.s7.h":"Cambios en esta política","privacy.s7.p":"Si añadimos o modificamos funciones del Sitio, revisaremos esta política y publicaremos la actualización en esta página.","privacy.s8.h":"Contacto","privacy.date":"Vigente desde el 19 de septiembre de 2026","a11y.menu":"Menú","a11y.language":"Elegir idioma","a11y.newtab":"(se abre en una pestaña nueva)","a11y.close":"Cerrar el menú","travel.hero.eyebrow":"COLOR GARDEN — TRAVEL","travel.hero.title":"Donde se rodó la película","travel.intro":"Cada destino empieza como una película. Este es el índice de esos lugares, tal como existen en el mundo.","travel.dest.eyebrow":"DESTINOS","travel.dest.title":"Los lugares de nuestras películas","travel.dest.soon":"Próximamente","travel.prep.eyebrow":"ANTES DE VIAJAR","travel.prep.title":"Preparar el viaje","travel.prep.pr":"Esta sección contiene publicidad (PR).","travel.prep.pending":"Enlace próximamente","travel.prep.esim.title":"Conectado al aterrizar","travel.prep.esim.body":"Buscar una SIM en el aeropuerto no es la mejor parte del viaje. Déjalo listo en el móvil antes de salir y los mapas y los traslados funcionan nada más llegar.","travel.prep.esim.cta":"Ver opciones de conexión","travel.prep.flight.title":"Cómo llegar al paisaje","travel.prep.flight.body":"Un mismo destino cambia según la ruta y la temporada. Empieza por saber cuánto cuesta un ida y vuelta.","travel.prep.flight.cta":"Buscar vuelos","travel.prep.package.title":"Vuelo y estancia, en uno","travel.prep.package.body":"Reservar el vuelo y el hotel juntos puede cerrar un viaje antes que hacerlo por separado. Va bien cuando las fechas ya están fijadas.","travel.prep.package.cta":"Ver vuelo + hotel","travel.journal.cta":"Leer el journal","travel.film.sound":"Con sonido","travel.film.back":"Volver a los destinos"},"ko":{"meta.title":"COLOR GARDEN","nav.travel":"여행","nav.music":"음악","nav.shop":"스토어","nav.digital":"디지털","nav.creative":"크리에이티브","nav.journal":"저널","nav.about":"브랜드 소개","hero.eyebrow":"럭셔리 트래블 · 오리지널 사운드 · 크리에이티브 라이프","hero.tagline":"마음을 움직이는 풍경을 걷고,<br />오래 남는 선율에 귀 기울이며,<br />일상에 색을 더합니다.","hero.cta":"둘러보기","intro.eyebrow":"우리의 세계","intro.headline":"발견하고, 느끼고, 영감을 얻다.","card.travel.title":"여행","card.travel.sub":"마음을 움직인 풍경의 기록","card.music.title":"음악","card.music.sub":"오리지널 음악","card.shop.title":"스토어","card.shop.sub":"의류와 오브제","card.digital.title":"디지털","card.digital.sub":"노하우와 디지털 제품","card.creative.title":"크리에이티브","card.creative.sub":"영상 제작과 크리에이티브","card.journal.title":"저널","card.journal.sub":"에세이와 제작 노트","card.view":"더 보기","about.eyebrow":"COLOR GARDEN 소개","about.heading":"삶에 색을 더하다.","about.body":"COLOR GARDEN은 여행과 음악, 그리고 만드는 일을 통해 일상에 작은 감동을 전하는 라이프스타일 브랜드입니다. 발길을 멈추게 하는 풍경, 오래 맴도는 한 소절의 선율, 정성으로 완성한 물건 — 그 하나하나가 지금의 하루에 새로운 색을 더합니다.","about.cta":"브랜드 스토리","footer.nav":"메뉴","footer.support":"고객 지원","footer.follow":"팔로우","footer.contact":"문의","footer.faq":"자주 묻는 질문","footer.privacy":"개인정보 처리방침","footer.copyright":"© 2026 COLOR GARDEN. ALL RIGHTS RESERVED.","a11y.closePanel":"닫기","contact.title":"문의하기","contact.lead":"COLOR GARDEN에 대한 문의는 이메일로 받고 있습니다. 아래에서 용건을 선택하면 제목이 입력된 상태로 메일 앱이 열립니다.","contact.topicsLabel":"용건","contact.topic.hotel":"호텔·숙박 시설 제휴","contact.topic.brand":"브랜드 제휴·광고","contact.topic.collab":"협업·제작 문의","contact.topic.product":"상품 문의","contact.topic.general":"기타 문의","contact.emailLabel":"이메일","contact.note":"보내주신 내용은 문의에 답변하는 용도로만 사용합니다.","contact.gmail":"Gmail로 작성","contact.fallback":"메일 앱이 열리지 않으면 각 항목 오른쪽의 「Gmail」 버튼을 이용하거나, 아래 주소를 복사해 사용하시는 메일로 보내 주세요.","contact.copy":"주소 복사","contact.copied":"복사했습니다","faq.title":"자주 묻는 질문","faq.q1":"COLOR GARDEN은 어떤 브랜드인가요?","faq.a1":"여행과 음악, 그리고 만드는 일을 통해 일상에 작은 감동을 전하는 라이프스타일 브랜드입니다.","faq.q2":"여행 영상은 어디에서 볼 수 있나요?","faq.a2":"TikTok과 Instagram에서 공개하고 있습니다. 페이지 하단의 링크에서 보실 수 있습니다.","faq.q3":"음악에 대해 알려주세요.","faq.a3":"오리지널 R&B 음악을 제작하고 있습니다.","faq.q4":"디지털 상품이 있나요?","faq.a4":"제작 노하우를 정리한 글을 저널(공식 note)에서 공개하고 있습니다. 일부는 유료 글입니다.","faq.q5":"저널에서는 무엇을 읽을 수 있나요?","faq.a5":"AI를 활용한 영상 제작 과정과 제작 비하인드를 담은 글입니다.","faq.q6":"업무 관련 문의를 할 수 있나요?","faq.a6":"호텔, 브랜드 제휴, 협업, 상품 등에 관한 문의는 Contact에서 이메일로 보내주세요.","faq.q7":"표시 언어를 바꿀 수 있나요?","faq.a7":"페이지 상단의 언어 버튼에서 선택할 수 있습니다(日本語 · English · Français · Español · 한국어). 선택한 언어는 다음 방문 때도 그대로 표시됩니다.","privacy.title":"개인정보 처리방침","privacy.intro":"COLOR GARDEN(이하 \"당사\")은 공식 웹사이트(이하 \"본 사이트\")에서의 정보 처리에 대해 다음과 같이 정합니다.","privacy.s1.h":"본 사이트가 수집하는 정보","privacy.s1.p":"본 사이트에는 문의 양식, 회원 가입, 구매·결제 기능이 없습니다. 본 사이트는 이름이나 이메일 주소 등의 개인정보를 이용자로부터 직접 수집하지 않습니다.","privacy.s2.h":"쿠키·접속 분석·광고","privacy.s2.p":"본 사이트는 쿠키를 사용하지 않습니다. 접속 분석 도구나 광고 서비스도 사용하지 않습니다.","privacy.s3.h":"브라우저에 저장되는 정보","privacy.s3.p":"표시 언어를 선택한 경우에 한해, 그 설정을 사용 중인 브라우저(localStorage)에 저장하여 다음 방문 시 사용합니다. 이 정보는 기기 안에만 저장되며, 당사나 제3자에게 전송되지 않습니다. 브라우저의 사이트 데이터를 삭제하면 지워집니다.","privacy.s4.h":"이용 중인 외부 서비스","privacy.s4.p":"본 사이트는 다음 외부 서비스를 이용합니다. 본 사이트를 표시할 때 이용자의 브라우저가 이 서비스들에 접속하며, IP 주소 등의 기술적 정보가 각 회사로 전송됩니다.","privacy.s4.github":"GitHub Pages(GitHub, Inc.) — 본 사이트 호스팅","privacy.s4.google":"Google Fonts(Google LLC) — 글꼴 표시","privacy.s5.h":"외부 사이트 링크","privacy.s5.p":"본 사이트에는 저널(공식 note), Instagram, TikTok, X, Threads로 연결되는 링크가 있습니다. 본 사이트는 이 서비스들의 게시물이나 프로그램을 삽입하고 있지 않습니다. 링크를 통해 이동한 이후의 정보 처리는 각 서비스의 개인정보 처리방침을 따릅니다.","privacy.s6.h":"문의 시 보내주신 정보","privacy.s6.p":"이메일로 문의하신 경우, 이메일 주소와 보내주신 내용은 문의에 답변하는 용도로만 사용하며, 법령에 따른 경우를 제외하고 본인의 동의 없이 제3자에게 제공하지 않습니다. 문의 메일은 Google LLC의 Gmail로 수신합니다.","privacy.s7.h":"본 방침의 변경","privacy.s7.p":"본 사이트의 기능을 추가·변경하는 경우, 본 방침을 개정하고 이 페이지에 게시합니다.","privacy.s8.h":"문의처","privacy.date":"시행일: 2026년 9월 19일","a11y.menu":"메뉴","a11y.language":"언어 선택","a11y.newtab":"(새 탭에서 열림)","a11y.close":"메뉴 닫기","travel.hero.eyebrow":"COLOR GARDEN — TRAVEL","travel.hero.title":"영상이 시작된 그곳으로","travel.intro":"모든 여행지는 한 편의 영상에서 시작됩니다. 이곳은 그 장소들이 실제로 존재하는 세계의 목록입니다.","travel.dest.eyebrow":"DESTINATIONS","travel.dest.title":"영상이 된 장소","travel.dest.soon":"준비 중","travel.prep.eyebrow":"BEFORE YOU GO","travel.prep.title":"여행 준비","travel.prep.pr":"※ 이 항목에는 광고(PR)가 포함되어 있습니다.","travel.prep.pending":"링크 준비 중","travel.prep.esim.title":"도착하는 순간부터 연결되도록","travel.prep.esim.body":"공항에서 유심을 찾는 시간은 여행에서 가장 좋은 시간이 아닙니다. 출발 전 휴대폰 안에서 준비해 두면 착륙 직후부터 지도와 차량 호출을 쓸 수 있습니다.","travel.prep.esim.cta":"통신 준비 보기","travel.prep.flight.title":"그 풍경까지 가는 방법","travel.prep.flight.body":"같은 목적지라도 경유지와 시기에 따라 여행의 모양이 달라집니다. 먼저 왕복 가격대를 아는 것부터.","travel.prep.flight.cta":"항공권 알아보기","travel.prep.package.title":"이동과 숙박을 하나로","travel.prep.package.body":"항공권과 숙소를 따로 잡는 것보다 함께 묶는 쪽이 빨리 정해질 때가 있습니다. 일정이 이미 정해진 여행에 잘 맞습니다.","travel.prep.package.cta":"항공권 + 호텔 함께 보기","travel.journal.cta":"JOURNAL 읽기","travel.film.sound":"사운드 있음","travel.film.back":"여행지 목록으로"}};
+
+  (function () {
+    var STORE_KEY = "cg-homepage-lang";
+    var LANGS = CG_I18N._langs;
+    var CODES = LANGS.map(function (l) { return l.code; });
+    var DEFAULT = "ja";
+
+    var root = document.documentElement;
+    root.classList.add("i18n-pending");
+
+    function read() {
+      try { return window.localStorage.getItem(STORE_KEY); } catch (e) { return null; }
+    }
+    function write(code) {
+      try { window.localStorage.setItem(STORE_KEY, code); } catch (e) { /* プライベートモード等。保存できなくても表示は続ける */ }
+    }
+
+    /* ブラウザの言語設定から一番近いものを選ぶ。"fr-CA" のような地域つきも拾う。 */
+    function fromBrowser() {
+      var list = (navigator.languages && navigator.languages.length)
+        ? navigator.languages
+        : [navigator.language || navigator.userLanguage || ""];
+      for (var i = 0; i < list.length; i++) {
+        var tag = String(list[i]).toLowerCase();
+        var base = tag.split("-")[0];
+        if (CODES.indexOf(base) >= 0) return base;
+      }
+      return null;
+    }
+
+    function pickInitial() {
+      var saved = read();
+      if (saved && CODES.indexOf(saved) >= 0) return saved;   /* 手動選択が最優先 */
+      return fromBrowser() || DEFAULT;
+    }
+
+    function apply(code) {
+      var dict = CG_I18N[code];
+      if (!dict) { code = DEFAULT; dict = CG_I18N[DEFAULT]; }
+      var meta = LANGS.filter(function (l) { return l.code === code; })[0] || LANGS[0];
+
+      root.setAttribute("lang", meta.htmlLang);
+
+      var i, nodes;
+      nodes = document.querySelectorAll("[data-i18n]");
+      for (i = 0; i < nodes.length; i++) {
+        var k = nodes[i].getAttribute("data-i18n");
+        if (dict[k] != null) nodes[i].textContent = dict[k];
+      }
+      /* <br> を含む文だけ innerHTML。値はこちらが用意した訳文のみで、外部入力は入らない。 */
+      nodes = document.querySelectorAll("[data-i18n-html]");
+      for (i = 0; i < nodes.length; i++) {
+        var kh = nodes[i].getAttribute("data-i18n-html");
+        if (dict[kh] != null) nodes[i].innerHTML = dict[kh];
+      }
+      nodes = document.querySelectorAll("[data-i18n-aria]");
+      for (i = 0; i < nodes.length; i++) {
+        var ka = nodes[i].getAttribute("data-i18n-aria");
+        if (dict[ka] != null) nodes[i].setAttribute("aria-label", dict[ka]);
+      }
+
+      if (dict["meta.title"]) document.title = dict["meta.title"];
+
+      var cur = document.getElementById("langCurrent");
+      if (cur) cur.textContent = meta.label;
+
+      var opts = document.querySelectorAll("#langMenu button");
+      for (i = 0; i < opts.length; i++) {
+        opts[i].setAttribute("aria-selected", opts[i].getAttribute("data-lang") === code ? "true" : "false");
+      }
+      current = code;
+    }
+
+    var current = DEFAULT;
+
+    /* --- 言語メニューを組み立てる --- */
+    var menu = document.getElementById("langMenu");
+    var switchEl = document.getElementById("langSwitch");
+    var toggle = document.getElementById("langToggle");
+
+    if (menu) {
+      for (var i = 0; i < LANGS.length; i++) {
+        var l = LANGS[i];
+        var li = document.createElement("li");
+        var b = document.createElement("button");
+        b.type = "button";
+        b.setAttribute("role", "option");
+        b.setAttribute("data-lang", l.code);
+        b.setAttribute("lang", l.htmlLang);
+        b.innerHTML = '<span class="lang-code"></span><span class="lang-name"></span>';
+        b.firstChild.textContent = l.label;
+        b.lastChild.textContent = l.native;
+        b.addEventListener("click", (function (code) {
+          return function () { write(code); apply(code); close(); };
+        })(l.code));
+        li.appendChild(b);
+        menu.appendChild(li);
+      }
+    }
+
+    function open() { if (switchEl) { switchEl.classList.add("is-open"); toggle.setAttribute("aria-expanded", "true"); } }
+    function close() { if (switchEl) { switchEl.classList.remove("is-open"); toggle.setAttribute("aria-expanded", "false"); } }
+
+    if (toggle) {
+      toggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        if (switchEl.classList.contains("is-open")) close(); else open();
+      });
+      document.addEventListener("click", function (e) {
+        if (switchEl && !switchEl.contains(e.target)) close();
+      });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+    }
+
+    apply(pickInitial());
+    root.classList.remove("i18n-pending");
+  })();
+
+  /* ------------------------------------------------------------------
+     モバイルメニュー（2026-09-09 追加）
+     1120px以下でヘッダーのナビを隠すため、その代わりの導線。
+     これまでハンバーガーは飾りで、押しても何も起きなかった。
+  ------------------------------------------------------------------ */
+  (function () {
+    var openBtn = document.getElementById("menuOpen");
+    var closeBtn = document.getElementById("menuClose");
+    var panel = document.getElementById("mobileMenu");
+    if (!openBtn || !panel) return;
+
+    function show() {
+      panel.hidden = false;
+      /* hidden を外した直後だと transition が効かないので1フレーム待つ */
+      window.requestAnimationFrame(function () { panel.classList.add("is-open"); });
+      openBtn.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+    }
+    function hide() {
+      panel.classList.remove("is-open");
+      openBtn.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+      window.setTimeout(function () { if (!panel.classList.contains("is-open")) panel.hidden = true; }, 300);
+    }
+
+    openBtn.addEventListener("click", show);
+    if (closeBtn) closeBtn.addEventListener("click", hide);
+    panel.addEventListener("click", function (e) { if (e.target.tagName === "A") hide(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") hide(); });
+    /* PC幅に戻したときに開きっぱなしにしない */
+    window.addEventListener("resize", function () { if (window.innerWidth > 1120) hide(); });
+  })();
+</script>
+
+<script>
+  var header = document.getElementById("siteHeader");
+  window.addEventListener("scroll", function () {
+    header.classList.toggle("is-scrolled", window.scrollY > 40);
+  }, { passive: true });
+
+  /* ヒーロー背景動画（2026-09-08 追加）
+     再生できることを確認してから表示する。自動再生が拒否された環境や
+     デコードに失敗した環境では、下地のグラデーションがそのまま残る。
+
+     autoplay 属性だけに頼らないのは、ブラウザが次の状況で自動再生を見送るため:
+       - 非表示タブ（バックグラウンドで開かれた／別タブに切り替わっている）
+       - 省電力モードや自動再生ブロック設定
+     いずれも「表示された時」「最初の操作の時」に静かに再生を始めれば足りる。 */
+  (function () {
+    var v = document.getElementById("heroVideo");
+    if (!v) return;
+
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) { v.pause(); return; }
+
+    function show() { v.classList.add("is-ready"); }
+    function tryPlay() {
+      if (!v.paused) return;
+      var p = v.play();
+      if (p && typeof p.catch === "function") p.catch(function () { /* 後で再試行する */ });
+    }
+
+    if (v.readyState >= 2) show();
+    v.addEventListener("loadeddata", function () { show(); tryPlay(); }, { once: true });
+    v.addEventListener("error", function () { v.classList.remove("is-ready"); });
+
+    tryPlay();
+
+    /* タブが表示された時に再生を開始する（非表示のまま開かれた場合の受け皿） */
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") tryPlay();
+    });
+    window.addEventListener("focus", tryPlay);
+
+    /* それでも始まらない環境のために、最初の操作でも試す */
+    window.addEventListener("pointerdown", tryPlay, { once: true });
+    window.addEventListener("keydown", tryPlay, { once: true });
+
+    /* ------------------------------------------------------------------
+       カットごとの見せ方（2026-09-09 追加）
+
+       PCのChromeではHeroが動画より横長になるため、cover は縦を約170px削る。
+       どの帯を残すかは object-position で決まるが、この動画は
+         浜辺の跳躍  … 女性の髪が上端32pxまで達する（上を削れない）
+         カプリ      … 女性が下端1011pxまで写っている（下を削れない）
+       と要求が真逆で、ひとつの値では両立しない（必要979px > 見える851px）。
+
+       そこでカット点（実測: 2.05 / 4.35 / 7.5 / 9.35秒）で値を切り替える。
+       切り替わるのは画が変わる瞬間なので、動いて見えることはない。
+       ------------------------------------------------------------------ */
+    var SHOTS = [
+      { until: 2.05,  pos: "80%" },  // ヴェネツィア（建築）
+      { until: 4.35,  pos: "80%" },  // カプリ（女性が下端まで写る）
+      { until: 7.50,  pos: "19%" },  // 浜辺（踊り→跳躍。髪が上端32pxまで達する）
+      { until: 9.35,  pos: "80%" },  // リール（歩く女性・足元まで）
+      { until: 99,    pos: "80%" },  // 京都（塔の先端と灯籠）
+    ];
+    var lastPos = null;
+    function applyShot() {
+      var t = v.currentTime;
+      var pos = "80%";
+      for (var i = 0; i < SHOTS.length; i++) {
+        if (t < SHOTS[i].until) { pos = SHOTS[i].pos; break; }
+      }
+      if (pos !== lastPos) { v.style.objectPosition = "center " + pos; lastPos = pos; }
+    }
+
+    /* 表示フレームごとに呼ばれるので、カットと完全に同じタイミングで切り替わる。
+       requestAnimationFrame は非表示タブで止まるため使わない。 */
+    if (typeof v.requestVideoFrameCallback === "function") {
+      var onFrame = function () { applyShot(); v.requestVideoFrameCallback(onFrame); };
+      v.requestVideoFrameCallback(onFrame);
+    }
+    /* 非対応ブラウザと、シーク・再生開始時の取りこぼしを拾う */
+    v.addEventListener("timeupdate", applyShot);
+    v.addEventListener("seeked", applyShot);
+    v.addEventListener("play", applyShot);
+    applyShot();
+  })();
+</script>
+
+<script>
+  /* ------------------------------------------------------------------
+     SUPPORT パネルの開閉（2026-09-19）
+     #contact / #faq / #privacy の URL で開く。直接リンク・戻るボタンにも対応。
+     閉じるとURLの # を外し、開く前にいた場所へフォーカスを戻す。
+  ------------------------------------------------------------------ */
+  (function () {
+    var IDS = ["contact", "faq", "privacy"];
+    var current = null, lastFocus = null;
+    function panel(id) { return document.getElementById("panel-" + id); }
+
+    function open(id) {
+      if (current === id) return;
+      if (current) hide(current, true);
+      var p = panel(id);
+      if (!p) return;
+      if (!current) lastFocus = document.activeElement;
+      p.hidden = false;
+      document.body.style.overflow = "hidden";
+      p.scrollTop = 0;
+      current = id;
+      var h = p.querySelector(".panel-title");
+      if (h) h.setAttribute("tabindex", "-1");
+      /* 見出しへフォーカスを移すのは、パネルが表示状態（is-open）になってから。
+         visibility:hidden の間はフォーカスを受け付けないため（2026-09-19 実測で判明）。 */
+      /* 次の描画のタイミングで表示する。requestAnimationFrame は表示されていないタブや一部の
+         アプリ内ブラウザで止まることがあり、そのままだと「押しても何も起きない」ように見える
+         （2026-09-19 実測）。短いタイマーを保険に付け、先に来た方で1回だけ実行する。 */
+      var shown = false;
+      function reveal() {
+        if (shown || current !== id) return;
+        shown = true;
+        p.classList.add("is-open");
+        void p.offsetWidth;
+        if (h) h.focus({ preventScroll: true });
+      }
+      window.requestAnimationFrame(reveal);
+      window.setTimeout(reveal, 60);
+    }
+
+    function hide(id, swapping) {
+      var p = panel(id);
+      if (!p) return;
+      p.classList.remove("is-open");
+      window.setTimeout(function () { if (!p.classList.contains("is-open")) p.hidden = true; }, 340);
+      if (!swapping) {
+        document.body.style.overflow = "";
+        if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+      }
+      if (current === id) current = null;
+    }
+
+    function closeAll() {
+      if (IDS.indexOf(location.hash.slice(1)) >= 0) history.replaceState(null, "", location.pathname + location.search);
+      if (current) hide(current);
+    }
+
+    function fromHash() {
+      var h = location.hash.slice(1);
+      if (IDS.indexOf(h) >= 0) open(h); else if (current) hide(current);
+    }
+
+    window.addEventListener("hashchange", fromHash);
+    document.addEventListener("click", function (e) {
+      var c = e.target.closest && e.target.closest("[data-close-panel]");
+      if (c) { e.preventDefault(); closeAll(); }
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && current) closeAll(); });
+    fromHash();
+  })();
+</script>
+
+</body>
+</html>
