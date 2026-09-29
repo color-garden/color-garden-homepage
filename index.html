@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="cg-build" content="bcb06d1f78d2" />
+<meta name="cg-build" content="5c501cd372f7" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
@@ -1665,8 +1665,22 @@
     window.addEventListener("resize", onScroll, { passive: true });
     btn.addEventListener("click", function () {
       var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      try { window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); }
-      catch (e) { window.scrollTo(0, 0); }   // 古いブラウザ
+      var start = window.pageYOffset || document.documentElement.scrollTop || 0;
+      if (reduce || start <= 0) { window.scrollTo(0, 0); return; }
+      /* 2026-09-30: scrollTo({behavior:"smooth"}) が何も起きない環境があった（公開HPの実測）。
+         当てにせず自前で動かす。最後は必ず 0 まで戻す */
+      var t0 = null;
+      var DUR = 420;
+      function step(t) {
+        if (t0 === null) t0 = t;
+        var p = Math.min(1, (t - t0) / DUR);
+        var e = 1 - Math.pow(1 - p, 3);             /* ease-out */
+        window.scrollTo(0, Math.round(start * (1 - e)));
+        if (p < 1) window.requestAnimationFrame(step);
+        else window.scrollTo(0, 0);
+      }
+      if (window.requestAnimationFrame) window.requestAnimationFrame(step);
+      else window.scrollTo(0, 0);
     });
     apply();
   })();
