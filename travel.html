@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="cg-build" content="5c501cd372f7" />
+<meta name="cg-build" content="2a7431aed297" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
@@ -1776,6 +1776,8 @@
       }
       if (window.requestAnimationFrame) window.requestAnimationFrame(step);
       else window.scrollTo(0, 0);
+      /* 画面が裏にある等で rAF が止まっても、最後は必ず先頭へ戻す */
+      window.setTimeout(function () { if ((window.pageYOffset || 0) > 0) window.scrollTo(0, 0); }, DUR + 250);
     });
     apply();
   })();
