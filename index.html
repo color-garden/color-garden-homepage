@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="cg-build" content="f14ad9d69fe3" />
+<meta name="cg-build" content="bcb06d1f78d2" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
@@ -985,11 +985,14 @@
     display: grid;
     place-items: center;
     padding: 0;
-    border: 1px solid var(--gold-dim);
+    /* 2026-09-30 修正: 枠が薄すぎて写真の上で見えなかった。金の枠をはっきりさせ、影で背景から分ける
+       （色は既存の gold をそのまま使う。新しい色は足していない） */
+    border: 1px solid rgba(198, 165, 103, 0.75);
     border-radius: 50%;
-    background: rgba(29, 26, 21, 0.82);
+    background: rgba(20, 18, 14, 0.92);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
     backdrop-filter: blur(10px);
-    color: var(--gold);
+    color: var(--gold-light);
     cursor: pointer;
     opacity: 0;
     visibility: hidden;
@@ -998,9 +1001,9 @@
                 border-color 200ms var(--ease-luxe), color 200ms var(--ease-luxe);
   }
   .to-top.is-visible { opacity: 1; visibility: visible; transform: translateY(0); transition-delay: 0s; }
-  .to-top:hover { border-color: var(--gold); color: var(--gold-light); }
+  .to-top:hover { border-color: var(--gold); background: rgba(29, 26, 21, 0.96); color: var(--gold-light); }
   .to-top:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
-  .to-top svg { width: 15px; height: 15px; display: block; }
+  .to-top svg { width: 17px; height: 17px; display: block; }
 
   /* スマホは少し内側へ。下端の操作バーに寄せすぎない */
   @media (max-width: 560px) {
@@ -1641,7 +1644,7 @@
 
 <!-- TOPへ戻る（2026-09-30 本人指示・追加のみ）。既存の要素・スクリプトには手を入れていない -->
 <button class="to-top" id="toTop" type="button" aria-label="ページの先頭へ戻る" title="ページの先頭へ戻る">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
     <path d="M12 19V5" /><path d="M5 12l7-7 7 7" />
   </svg>
 </button>
