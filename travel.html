@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="cg-build" content="2a7431aed297" />
+<meta name="cg-build" content="1df621046573" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
@@ -1749,15 +1749,14 @@
     var btn = document.getElementById("toTop");
     if (!btn) return;
     var SHOW_AT = 320;          // これ以上スクロールしたら出す
-    var ticking = false;
+    /* 2026-09-30: 表示の切り替えを requestAnimationFrame 経由にしていたが、
+       画面が裏にあるなど rAF が止まる状況では出ないままになる。クラスの付け外しは軽いので直接行う */
     function apply() {
-      ticking = false;
       var y = window.pageYOffset || document.documentElement.scrollTop || 0;
       btn.classList.toggle("is-visible", y > SHOW_AT);
     }
-    function onScroll() { if (!ticking) { ticking = true; window.requestAnimationFrame(apply); } }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
+    window.addEventListener("scroll", apply, { passive: true });
+    window.addEventListener("resize", apply, { passive: true });
     btn.addEventListener("click", function () {
       var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       var start = window.pageYOffset || document.documentElement.scrollTop || 0;
