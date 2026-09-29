@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="cg-build" content="b0ac0a0dbb76" />
+<meta name="cg-build" content="f14ad9d69fe3" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
@@ -959,6 +959,51 @@
     .panel-close { top: 14px; right: 12px; }
     .info-panel p, .info-panel li { font-size: 0.9rem; }
   }
+
+  /* ------------------------------------------------------------
+     TOPへ戻る（2026-09-30 本人指示）
+     既存のレイアウト・ナビ・文章・画像には一切触れない追加だけの要素。
+     このテンプレートは index.html と Travel 各ページの共通の元なので、ここに置けば全ページで同じものが出る。
+     ・下へスクロールしたときだけ出す（既定は非表示＝タブ順にも入らない visibility:hidden）
+     ・右下・既存の固定要素より奥（z-index 50 < モバイルメニュー60 < SUPPORTパネル70）なので重ならない
+     ・色・書体は既存の変数だけを使う（新しい色は足さない）
+  ------------------------------------------------------------ */
+  .to-top {
+    position: fixed;
+    right: var(--sp-2);
+    bottom: var(--sp-2);
+    z-index: 50;
+    width: 44px;              /* 指で押せる最小サイズ。大きくしすぎない */
+    height: 44px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--gold-dim);
+    border-radius: 50%;
+    background: rgba(29, 26, 21, 0.82);
+    backdrop-filter: blur(10px);
+    color: var(--gold);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 280ms var(--ease-luxe), transform 280ms var(--ease-luxe), visibility 0s linear 280ms,
+                border-color 200ms var(--ease-luxe), color 200ms var(--ease-luxe);
+  }
+  .to-top.is-visible { opacity: 1; visibility: visible; transform: translateY(0); transition-delay: 0s; }
+  .to-top:hover { border-color: var(--gold); color: var(--gold-light); }
+  .to-top:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  .to-top svg { width: 15px; height: 15px; display: block; }
+
+  /* スマホは少し内側へ。下端の操作バーに寄せすぎない */
+  @media (max-width: 560px) {
+    .to-top { right: 14px; bottom: 14px; width: 42px; height: 42px; }
+  }
+  /* 動きを減らす設定の人には動かさない */
+  @media (prefers-reduced-motion: reduce) {
+    .to-top { transition: opacity 1ms linear, visibility 0s; transform: none; }
+    .to-top.is-visible { transform: none; }
+  }
 </style>
 
 <header class="site-header" id="siteHeader">
@@ -1195,7 +1240,7 @@
   </div>
 </section>
 
-<section class="tv-prep">
+<section class="tv-prep" id="before-you-go">
   <div class="tv-prep-inner">
     <p class="tv-eyebrow" data-i18n="travel.prep.eyebrow">Before you go</p>
     <h2 class="tv-sec-title" data-i18n="travel.prep.title">Preparing the journey</h2>
@@ -1204,17 +1249,17 @@
       <li class="tv-prep-item">
         <p class="tv-prep-title" data-i18n="travel.prep.esim.title">—</p>
         <p class="tv-prep-body" data-i18n="travel.prep.esim.body">—</p>
-        <a class="tv-prep-cta" href="https://px.a8.net/svt/ejp?a8mat=4BCHZW+26LD9E+5NG6+5YRHE" target="_blank" rel="nofollow noopener"><span data-i18n="travel.prep.esim.cta">View</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
+        <a class="tv-prep-cta" href="https://px.a8.net/svt/ejp?a8mat=4BCHZW+26LD9E+5NG6+5YRHE&amp;id1=travel&amp;id2=esim" target="_blank" rel="sponsored nofollow noopener"><span data-i18n="travel.prep.esim.cta">View</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a><img class="a8-imp" border="0" width="1" height="1" src="https://www12.a8.net/0.gif?a8mat=4BCHZW+26LD9E+5NG6+5YRHE" alt="" style="position:absolute;width:1px;height:1px;opacity:0" />
       </li>
       <li class="tv-prep-item">
         <p class="tv-prep-title" data-i18n="travel.prep.flight.title">—</p>
         <p class="tv-prep-body" data-i18n="travel.prep.flight.body">—</p>
-        <a class="tv-prep-cta" href="https://px.a8.net/svt/ejp?a8mat=4BCHZW+1WGZZ6+4R2M+NTRMQ" target="_blank" rel="nofollow noopener"><span data-i18n="travel.prep.flight.cta">View</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
+        <a class="tv-prep-cta" href="https://px.a8.net/svt/ejp?a8mat=4BCHZW+1WGZZ6+4R2M+NTRMQ&amp;id1=travel&amp;id2=flight" target="_blank" rel="sponsored nofollow noopener"><span data-i18n="travel.prep.flight.cta">View</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a><img class="a8-imp" border="0" width="1" height="1" src="https://www18.a8.net/0.gif?a8mat=4BCHZW+1WGZZ6+4R2M+NTRMQ" alt="" style="position:absolute;width:1px;height:1px;opacity:0" />
       </li>
       <li class="tv-prep-item">
         <p class="tv-prep-title" data-i18n="travel.prep.package.title">—</p>
         <p class="tv-prep-body" data-i18n="travel.prep.package.body">—</p>
-        <a class="tv-prep-cta" href="https://px.a8.net/svt/ejp?a8mat=4BCHZW+N8202+4R2M+ZQNG2" target="_blank" rel="nofollow noopener"><span data-i18n="travel.prep.package.cta">View</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
+        <a class="tv-prep-cta" href="https://px.a8.net/svt/ejp?a8mat=4BCHZW+N8202+4R2M+ZQNG2&amp;id1=travel&amp;id2=package" target="_blank" rel="sponsored nofollow noopener"><span data-i18n="travel.prep.package.cta">View</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a><img class="a8-imp" border="0" width="1" height="1" src="https://www15.a8.net/0.gif?a8mat=4BCHZW+N8202+4R2M+ZQNG2" alt="" style="position:absolute;width:1px;height:1px;opacity:0" />
       </li>
     </ul>
   </div>
@@ -1223,7 +1268,18 @@
 <section class="tv-journal">
   <a href="https://note.com/color_garden" class="btn nav-ext" target="_blank" rel="noopener"><span data-i18n="travel.journal.cta">Read the journal</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
 </section>
-<footer class="site-footer">
+<script>
+(function () {
+  var m = /[?&]from=([A-Za-z0-9]{1,20})(?:&|$)/.exec(location.search);
+  if (!m) return;
+  var from = m[1];
+  document.querySelectorAll('a[href^="https://px.a8.net/"]').forEach(function (a) { a.href = a.href + '&id3=' + from; });
+  document.querySelectorAll('a[href]').forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (/^[a-z0-9-]+\.html(#.*)?$/.test(h)) a.setAttribute('href', h.replace(/(\.html)/, '$1?from=' + from));
+  });
+})();
+</script><footer class="site-footer">
   <div class="footer-grid">
     <div class="footer-col"><p class="footer-logo">COLOR GARDEN</p></div>
     <div class="footer-col">
@@ -1675,6 +1731,36 @@
     });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && current) closeAll(); });
     fromHash();
+  })();
+</script>
+
+<!-- TOPへ戻る（2026-09-30 本人指示・追加のみ）。既存の要素・スクリプトには手を入れていない -->
+<button class="to-top" id="toTop" type="button" aria-label="ページの先頭へ戻る" title="ページの先頭へ戻る">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <path d="M12 19V5" /><path d="M5 12l7-7 7 7" />
+  </svg>
+</button>
+<script>
+  /* TOPへ戻る。既存の処理とは独立していて、失敗しても他を壊さない */
+  (function () {
+    var btn = document.getElementById("toTop");
+    if (!btn) return;
+    var SHOW_AT = 320;          // これ以上スクロールしたら出す
+    var ticking = false;
+    function apply() {
+      ticking = false;
+      var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+      btn.classList.toggle("is-visible", y > SHOW_AT);
+    }
+    function onScroll() { if (!ticking) { ticking = true; window.requestAnimationFrame(apply); } }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    btn.addEventListener("click", function () {
+      var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      try { window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); }
+      catch (e) { window.scrollTo(0, 0); }   // 古いブラウザ
+    });
+    apply();
   })();
 </script>
 
