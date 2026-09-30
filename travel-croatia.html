@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="cg-build" content="29d3b0102cbc" />
+<meta name="cg-build" content="dfa852cf92ec" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
@@ -1118,6 +1118,11 @@
     font-family: var(--serif-en); font-weight: 300;
     font-size: clamp(1.15rem, 2.6vw, 1.7rem); line-height: 1.8;
     color: var(--ivory); max-width: 720px; margin: 0 auto;
+    /* 2026-10-01 修正: Cormorant Garamond は既定がオールドスタイル数字で、
+       「1本の映像」の 1 が小文字の高さになり別の字に見えていた。
+       文字は通常の半角数字のままで、字形だけ通常の数字（ライニング）にする */
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1;
   }
   .tv-intro .tv-rule { margin: var(--sp-4) auto 0; }
 
