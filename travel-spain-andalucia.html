@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="cg-build" content="e6833f6dc1f6" />
+<meta name="cg-build" content="2a56d630ca2c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
@@ -993,7 +993,10 @@
     transition: opacity 280ms var(--ease-luxe), transform 280ms var(--ease-luxe), visibility 0s linear 280ms,
                 border-color 200ms var(--ease-luxe), color 200ms var(--ease-luxe);
   }
-  .to-top.is-visible { opacity: 1; visibility: visible; transform: translateY(0); transition-delay: 0s; }
+  /* 2026-09-30: 出すときはトランジションに頼らない。描画が走らない状況（裏の画面・省電力・
+     スクロール復元の直後など）だと opacity 0 のまま止まり「ボタンが無い」ように見えたため。
+     消えるときだけ下の transition が効く */
+  .to-top.is-visible { opacity: 1; visibility: visible; transform: translateY(0); transition: none; }
   .to-top:hover { border-color: var(--gold); background: rgba(29, 26, 21, 0.96); color: var(--gold-light); }
   .to-top:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
   .to-top svg { width: 17px; height: 17px; display: block; }
@@ -1720,7 +1723,7 @@
 </script>
 
 <!-- TOPへ戻る（2026-09-30 本人指示・追加のみ）。既存の要素・スクリプトには手を入れていない -->
-<button class="to-top" id="toTop" data-cg-v="2" type="button" aria-label="ページの先頭へ戻る" title="ページの先頭へ戻る">
+<button class="to-top" id="toTop" data-cg-v="3" type="button" aria-label="ページの先頭へ戻る" title="ページの先頭へ戻る">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
     <path d="M12 19V5" /><path d="M5 12l7-7 7 7" />
   </svg>
