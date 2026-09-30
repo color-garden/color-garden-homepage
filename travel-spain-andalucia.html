@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="cg-build" content="2a56d630ca2c" />
+<meta name="cg-build" content="29d3b0102cbc" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
@@ -970,21 +970,24 @@
   ------------------------------------------------------------ */
   .to-top {
     position: fixed;
-    right: var(--sp-2);
-    bottom: var(--sp-2);
-    z-index: 50;
-    width: 44px;              /* 指で押せる最小サイズ。大きくしすぎない */
-    height: 44px;
+    /* 2026-09-30 修正: 位置は固定値にする。余白変数は画面幅で伸び縮みするため、
+       ウィンドウによって端に寄りすぎて見つけにくくなっていた */
+    right: 24px;
+    bottom: 24px;
+    z-index: 200;             /* ヘッダーなど既存の固定要素より必ず上 */
+    width: 52px;
+    height: 52px;
     display: grid;
     place-items: center;
     padding: 0;
     /* 2026-09-30 修正: 枠が薄すぎて写真の上で見えなかった。金の枠をはっきりさせ、影で背景から分ける
-       （色は既存の gold をそのまま使う。新しい色は足していない） */
-    border: 1px solid rgba(198, 165, 103, 0.75);
+       （色は既存の gold をそのまま使う。新しい色は足していない）
+       backdrop-filter は使わない。環境（GPU・省電力・描画設定）によっては
+       要素ごと描かれず「ボタンが無い」ように見えることがあるため */
+    border: 2px solid var(--gold);
     border-radius: 50%;
-    background: rgba(20, 18, 14, 0.92);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(10px);
+    background: #14120e;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.35);
     color: var(--gold-light);
     cursor: pointer;
     opacity: 0;
@@ -997,13 +1000,14 @@
      スクロール復元の直後など）だと opacity 0 のまま止まり「ボタンが無い」ように見えたため。
      消えるときだけ下の transition が効く */
   .to-top.is-visible { opacity: 1; visibility: visible; transform: translateY(0); transition: none; }
-  .to-top:hover { border-color: var(--gold); background: rgba(29, 26, 21, 0.96); color: var(--gold-light); }
+  .to-top:hover { background: #1d1a15; color: var(--gold-light); }
   .to-top:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
-  .to-top svg { width: 17px; height: 17px; display: block; }
+  .to-top svg { width: 20px; height: 20px; display: block; }
 
   /* スマホは少し内側へ。下端の操作バーに寄せすぎない */
   @media (max-width: 560px) {
-    .to-top { right: 14px; bottom: 14px; width: 42px; height: 42px; }
+    .to-top { right: 16px; bottom: 16px; width: 46px; height: 46px; }
+    .to-top svg { width: 18px; height: 18px; }
   }
   /* 動きを減らす設定の人には動かさない */
   @media (prefers-reduced-motion: reduce) {
@@ -1723,7 +1727,7 @@
 </script>
 
 <!-- TOPへ戻る（2026-09-30 本人指示・追加のみ）。既存の要素・スクリプトには手を入れていない -->
-<button class="to-top" id="toTop" data-cg-v="3" type="button" aria-label="ページの先頭へ戻る" title="ページの先頭へ戻る">
+<button class="to-top" id="toTop" data-cg-v="4" type="button" aria-label="ページの先頭へ戻る" title="ページの先頭へ戻る">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
     <path d="M12 19V5" /><path d="M5 12l7-7 7 7" />
   </svg>
