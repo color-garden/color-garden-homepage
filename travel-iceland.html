@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="cg-build" content="1df621046573" />
+<meta name="cg-build" content="e6833f6dc1f6" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
@@ -1720,7 +1720,7 @@
 </script>
 
 <!-- TOPへ戻る（2026-09-30 本人指示・追加のみ）。既存の要素・スクリプトには手を入れていない -->
-<button class="to-top" id="toTop" type="button" aria-label="ページの先頭へ戻る" title="ページの先頭へ戻る">
+<button class="to-top" id="toTop" data-cg-v="2" type="button" aria-label="ページの先頭へ戻る" title="ページの先頭へ戻る">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
     <path d="M12 19V5" /><path d="M5 12l7-7 7 7" />
   </svg>
@@ -1730,7 +1730,7 @@
   (function () {
     var btn = document.getElementById("toTop");
     if (!btn) return;
-    var SHOW_AT = 320;          // これ以上スクロールしたら出す
+    var SHOW_AT = 120;          // これ以上スクロールしたら出す（2026-09-30: 320 では出るまで遠く、見つけられないという声があったため下げた）
     /* 2026-09-30: 表示の切り替えを requestAnimationFrame 経由にしていたが、
        画面が裏にあるなど rAF が止まる状況では出ないままになる。クラスの付け外しは軽いので直接行う */
     function apply() {
@@ -1739,6 +1739,9 @@
     }
     window.addEventListener("scroll", apply, { passive: true });
     window.addEventListener("resize", apply, { passive: true });
+    /* 途中位置で開き直したとき（ブラウザのスクロール復元）にも出す */
+    window.addEventListener("load", apply);
+    window.addEventListener("pageshow", apply);
     btn.addEventListener("click", function () {
       var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       var start = window.pageYOffset || document.documentElement.scrollTop || 0;
