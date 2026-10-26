@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="cg-build" content="1512eed26650" />
+<meta name="cg-build" content="cdf99f7dbc3f" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
@@ -1241,7 +1241,50 @@
 </style>
 
 <section class="tv-hero">
-  <div class="tv-hero-photo"><img src="assets/travel-hero-lisbon-wide.jpg?v=e795503d8f" alt="" style="object-position:30% center" /></div>
+  <div class="tv-hero-photo"><style>.tv-hero-photo video { display: block; width: 100%; height: 100%; max-width: none; object-fit: cover; }</style><video id="tvHeroVideo" autoplay muted loop playsinline preload="metadata" poster="assets/travel-hero-video-poster.jpg?v=d541574523" aria-hidden="true" tabindex="-1" disablepictureinpicture data-focus="center center" data-scenes="[[3.95,4.21,8.13,8.38,0.147,8]]" style="object-position:center center"><source src="assets/travel-hero-video.mp4?v=384f156595" type="video/mp4" /></video>
+  <script>
+  (function () {
+    var v = document.getElementById("tvHeroVideo");
+    if (!v) return;
+    /* シーンごとの表示位置（travel.json の hero.video_scenes：[寄せ始め, 寄せ終わり, 戻し始め, 戻し終わり, 頭のてっぺんの高さ, 上端からの余白px]）。
+       位置の移動はつなぎ目のクロスフェードの中だけ。寄せ終わり〜戻し始めは一定で、ほかの時間は data-focus のまま1コマも動かさない。
+       表示されたコマの時刻（requestVideoFrameCallback の mediaTime）で当てる。無いブラウザは毎フレームの currentTime */
+    var base = v.getAttribute("data-focus") || "center", scenes = [];
+    try { scenes = JSON.parse(v.getAttribute("data-scenes") || "[]"); } catch (e) { scenes = []; }
+    function targetPct(sc) {
+      var r = v.getBoundingClientRect(), vw = v.videoWidth || 1918, vh = v.videoHeight || 1080;
+      var k = Math.max(r.width / vw, r.height / vh), hd = vh * k, over = hd - r.height;
+      if (over <= 0.5) return null;
+      return Math.min(1, Math.max(0, (sc[4] * hd - sc[5]) / over)) * 100;
+    }
+    function ease(u) { return u <= 0 ? 0 : u >= 1 ? 1 : u * u * (3 - 2 * u); }
+    function focusAt(t) {
+      for (var i = 0; i < scenes.length; i++) {
+        var sc = scenes[i];
+        if (t < sc[0] || t >= sc[3]) continue;
+        var p = targetPct(sc); if (p == null) return base;
+        var u = ease(t < sc[1] ? (t - sc[0]) / (sc[1] - sc[0]) : t < sc[2] ? 1 : 1 - (t - sc[2]) / (sc[3] - sc[2]));
+        return u <= 0 ? base : "center " + (50 + (p - 50) * u).toFixed(2) + "%";
+      }
+      return base;
+    }
+    var cur = base;
+    function apply(t) { var f = focusAt(t); if (f !== cur) { v.style.objectPosition = f; cur = f; } }
+    if (scenes.length) {
+      if (typeof v.requestVideoFrameCallback === "function") { var onFrame = function (now, md) { apply(md.mediaTime); v.requestVideoFrameCallback(onFrame); }; v.requestVideoFrameCallback(onFrame); }
+      else { (function loop() { apply(v.currentTime || 0); window.requestAnimationFrame(loop); })(); }
+      v.addEventListener("seeked", function () { apply(v.currentTime || 0); });
+      window.addEventListener("resize", function () { cur = null; apply(v.currentTime || 0); });
+    }
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) { v.removeAttribute("autoplay"); v.pause(); return; }
+    v.muted = true;
+    function tryPlay() { if (!v.paused) return; var p = v.play(); if (p && typeof p.catch === "function") p.catch(function () {}); }
+    tryPlay();
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) tryPlay(); });
+    ["pointerdown", "touchstart", "keydown"].forEach(function (e) { window.addEventListener(e, tryPlay, { once: true, passive: true }); });
+  })();
+  </script></div>
   <div class="tv-hero-copy">
     <p class="tv-eyebrow" data-i18n="travel.hero.eyebrow">Color Garden — Travel</p>
     <h1 class="tv-hero-title" data-i18n="travel.hero.title">Where the film was made</h1>
